@@ -1,4 +1,3 @@
-{{-- resources/views/admin/listings/categories.blade.php --}}
 @extends('layouts.admin')
 
 @section('content')
@@ -12,7 +11,7 @@
             </h5>
 
             <div class="row">
-                @forelse($serviceMain->categories ?? [] as $category)
+                @forelse($serviceMain?->children ?? [] as $category)
                     <div class="col-md-6 col-lg-4">
                         <div class="card category-item service-category text-center">
                             <div class="category-icon">
@@ -72,7 +71,7 @@
             </h5>
 
             <div class="row">
-                @forelse($shopMain->categories ?? [] as $category)
+                @forelse($shopMain?->children ?? [] as $category)
                     <div class="col-md-6 col-lg-4">
                         <div class="card category-item shop-category text-center">
                             <div class="category-icon">
@@ -145,7 +144,7 @@
                     {{-- Main Category --}}
                     <div class="mb-3">
                         <label class="form-label">Main Category</label>
-                        <select name="main_category_id" class="form-select" required>
+                        <select name="parent_id" class="form-select" required>
                             <option value="">Select</option>
                             @foreach($mainCategories as $main)
                                 <option value="{{ $main->id }}">{{ $main->name }}</option>

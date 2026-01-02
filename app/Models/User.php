@@ -42,4 +42,28 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+
+    public function deos()
+    {
+        return $this->hasMany(User::class, 'area_operator_id')
+            ->where('role', 'deo');
+    }
+    public function areaOperator()
+    {
+        return $this->belongsTo(User::class, 'area_operator_id');
+    }
+
+    public function salesmen()
+    {
+        return $this->hasMany(User::class, 'deo_id')
+            ->where('role', 'salesman');
+    }
+
+    public function deo()
+    {
+        return $this->belongsTo(User::class, 'deo_id');
+    }
+
+   
 }

@@ -1,6 +1,16 @@
 <?php
 
+use App\Http\Controllers\Admin\AreaOperatorController;
+use App\Http\Controllers\Admin\BlockedUserController;
+use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\PlanController;
+use App\Http\Controllers\SubCategoryController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\DeoController;
+use App\Http\Controllers\Admin\SalesmanController;
+use App\Http\Controllers\Admin\VerificationController;
+use App\Http\Controllers\RegisterController\UserRegisterController;
 
 /*
 |--------------------------------------------------------------------------
@@ -11,6 +21,15 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+Route::get('register/area-operator', [UserRegisterController::class,'createAreaOperator'])->name('admin.area-operators.create');
+Route::post('register/area-operator', [UserRegisterController::class,'storeAreaOperator'])->name('admin.area-operators.store');
+
+Route::get('register/deo', [UserRegisterController::class,'createDEO'])->name('admin.deos.create');
+Route::post('register/deo', [UserRegisterController::class,'storeDEO'])->name('admin.deos.store');
+
+Route::get('register/salesman', [UserRegisterController::class,'createSalesman'])->name('admin.salesmen.create');
+Route::post('register/salesman', [UserRegisterController::class,'storeSalesman'])->name('admin.salesmen.store');
+
 
 /*
 |--------------------------------------------------------------------------
@@ -22,62 +41,52 @@ Route::middleware(['auth', 'role:admin'])
     ->name('admin.')
     ->group(function () {
 
-        Route::get('/dashboard', [App\Http\Controllers\Admin\DashboardController::class, 'index'])
-            ->name('dashboard');
+        Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+        Route::get('/users', [UserController::class, 'index'])->name('users');
+        Route::get('/area-operators', [AreaOperatorController::class, 'index'])->name('area-operators');
+        Route::get('/admin/area-operators/{id}', [AreaOperatorController::class, 'show'])->name('area-operators.show');
+        Route::get('/admin/area-operators/{id}/edit', [AreaOperatorController::class, 'edit'])->name('area-operators.edit');
+        Route::delete('/admin/area-operators/{id}', [AreaOperatorController::class, 'destroy'])->name('area-operators.destroy');
 
-        // User Management
-        Route::get('/users', fn () => view('admin.users.index'))->name('all-users');
-        Route::get('/service-providers', fn () => view('admin.users.providers'))->name('service-providers');
-        Route::get('/shop-owners', fn () => view('admin.users.shop-owners'))->name('shop-owners');
-        Route::get('/verification-requests', fn () => view('admin.users.verifications'))->name('verification-requests');
-        Route::get('/blocked-users', fn () => view('admin.users.blocked'))->name('blocked-users');
 
-        // Categories
-        Route::get('/categories', fn () => view('admin.categories.index'))->name('categories');
+        Route::get('/deos', [DeoController::class, 'index'])->name('deos');
+        Route::get('deos/{deo}', [DeoController::class, 'show'])->name('deos.show');
+        Route::get('deos/{deo}/edit', [DeoController::class, 'edit'])->name('deos.edit');
+        Route::delete('deos/{deo}', [DeoController::class, 'destroy'])->name('deos.destroy');
 
-        // Staff
-        Route::get('/employees', fn () => view('admin.staff.employees'))->name('employees');
-        Route::get('/activity-logs', fn () => view('admin.staff.logs'))->name('activity-logs');
+        Route::get('/salesmen', [SalesmanController::class, 'index'])->name('salesmen');
+        Route::get('salesmen/{salesman}/edit', [salesmanController::class,'edit'])->name('salesmen.edit');
+        Route::put('salesmen/{salesman}', [SalesmanController::class,'update'])->name('salesmen.update');
+        Route::delete('salesmen/{salesman}', [SalesmanController::class,'destroy'])->name('salesmen.destroy');
 
-        // Ads
-        Route::get('/ads', fn () => view('admin.ads.index'))->name('all-ads');
-        Route::get('/ads/create', fn () => view('admin.ads.create'))->name('create-ads');
-        Route::get('/ads/pending', fn () => view('admin.ads.pending'))->name('pending-ads');
-        Route::get('/ads/slots', fn () => view('admin.ads.slots'))->name('ad-slots-management');
+        Route::get('/categories', [SubCategoryController::class, 'index'])->name('categories.index');
+        Route::post('/categories', [SubCategoryController::class, 'store'])->name('categories.store');
+        Route::get('/categories/{category}/edit', [SubCategoryController::class, 'edit'])->name('categories.edit');
+        Route::put('/categories/{category}', [SubCategoryController::class, 'update'])->name('categories.update');
+        Route::delete('/categories/{category}', [SubCategoryController::class, 'destroy'])->name('categories.destroy');
 
-        // Offers
-        Route::get('/offers', fn () => view('admin.offers.index'))->name('all-offers');
-        Route::get('/offers/create', fn () => view('admin.offers.create'))->name('create-offer');
-        Route::get('/offers/scheduled', fn () => view('admin.offers.scheduled'))->name('scheduled-offers');
+        Route::get('/plans/create', [PlanController::class, 'create'])->name('plans.create');
+        Route::post('/plans', [PlanController::class, 'store'])->name('plans.store');
+        Route::get('/plans/{plan}/edit', [PlanController::class, 'edit'])->name('plans.edit');
+        Route::put('/plans/{plan}', [PlanController::class, 'update'])->name('plans.update');
+        Route::delete('/plans/{plan}', [PlanController::class, 'destroy'])->name('plans.destroy');
+        /*
+        |--------------------------------------------------------------------------
+        | VERIFICATION & BLOCKING
+        |--------------------------------------------------------------------------
+        */
+       Route::get('/vendor-verifications', [VerificationController::class, 'vendors'])->name('vendor-verifications');
 
-        // Rewards
-        Route::get('/rewards/daily', fn () => view('admin.rewards.daily'))->name('daily-challenges');
-        Route::get('/rewards/spin', fn () => view('admin.rewards.spin'))->name('spin-win');
-        Route::get('/rewards/scratch', fn () => view('admin.rewards.scratch'))->name('scratch-cards');
-        Route::get('/rewards/rules', fn () => view('admin.rewards.rules'))->name('reward-rules');
+       Route::post('/vendor-verifications/{id}/approve', [VerificationController::class, 'approve'])->name('vendor-verifications.approve');
 
-        // Wallet & Gifts
-        Route::get('/gift-cards', fn () => view('admin.gifts.cards'))->name('gift-card-management');
-        Route::get('/wallet', fn () => view('admin.wallet.transactions'))->name('wallet-transactions');
-        Route::get('/redemptions', fn () => view('admin.wallet.redemptions'))->name('redemption-requests');
+        Route::delete('/vendor-verifications/{id}/reject', [VerificationController::class, 'reject'])
+            ->name('vendor-verifications.reject');
 
-        // Information
-        Route::get('/panchayath-notices', fn () => view('admin.info.notices'))->name('panchayath-notices');
-        Route::get('/emergency-contacts', fn () => view('admin.info.contacts'))->name('emergency-contacts');
-        Route::get('/local-announcements', fn () => view('admin.info.announcements'))->name('local-announcements');
+        Route::get('/blocked-users', [BlockedUserController::class, 'index'])
+            ->name('blocked-users');
 
-        // Reports
-        Route::get('/reports', fn () => view('admin.reports.index'))->name('reports');
-        Route::post('/logout', [App\Http\Controllers\Auth\AuthenticatedSessionController::class, 'destroy'])->name('logout');
-
-        // Settings
-        Route::get('/settings/general', fn () => view('admin.settings.general'))->name('general-settings');
-        Route::get('/settings/app', fn () => view('admin.settings.app'))->name('app-configuration');
-        Route::get('/settings/locality', fn () => view('admin.settings.locality'))->name('locality-setup');
-        Route::get('/settings/notifications', fn () => view('admin.settings.notifications'))->name('notification-settings');
-        Route::get('/pending-approvals', fn () => view('admin.approvals.pending'))->name('pending-approvals');
-        // Profile
-        Route::get('/profile', fn () => view('admin.profile.index'))->name('profile');
+        Route::patch('/blocked-users/{id}/unblock', [BlockedUserController::class, 'unblock'])
+            ->name('blocked-users.unblock');
     });
 
 
@@ -134,4 +143,4 @@ Route::middleware(['auth', 'role:user'])
 | AUTH ROUTES (Breeze / Fortify)
 |--------------------------------------------------------------------------
 */
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

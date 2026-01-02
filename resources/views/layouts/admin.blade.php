@@ -78,11 +78,11 @@
                             </button>
                             <div class="dropdown-menu dropdown-menu-end">
                                 <h6 class="dropdown-header">Welcome Anna!</h6>
-                                <a class="dropdown-item" href="{{ route('admin.profile') }}"><i class="mdi mdi-account-circle text-muted fs-16 align-middle me-1"></i> <span class="align-middle">Profile</span></a>
+                                <a class="dropdown-item" href=""><i class="mdi mdi-account-circle text-muted fs-16 align-middle me-1"></i> <span class="align-middle">Profile</span></a>
                                 <a class="dropdown-item" href=""><i class="mdi mdi-message-text-outline text-muted fs-16 align-middle me-1"></i> <span class="align-middle">Messages</span></a>
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href=""><i class="mdi mdi-cog-outline text-muted fs-16 align-middle me-1"></i> <span class="align-middle">Settings</span></a>
-                                <form method="POST" action="{{ route('admin.logout') }}">
+                                <form method="POST" action="">
                                     @csrf
                                     <button type="submit" class="nav-link menu-link btn btn-link ">
                                         <i class="ri-file-chart-line"></i>
@@ -144,30 +144,35 @@
                                 <ul class="nav nav-sm flex-column">
 
                                     <li class="nav-item">
-                                        <a href="{{ route('admin.all-users') }}" class="nav-link" data-key="t-allusers">
-                                            All Users
+                                        <a href="" class="nav-link" data-key="t-allusers">
+                                            App/Web Users
                                         </a>
                                     </li>
 
                                     <li class="nav-item">
-                                        <a href="{{ route('admin.service-providers') }}" class="nav-link" data-key="t-providers">
-                                            Service Providers
+                                        <a href="{{ route('admin.area-operators') }}" class="nav-link" data-key="t-providers">
+                                            Area Operators
                                         </a>
                                     </li>
 
                                     <li class="nav-item">
-                                        <a href="{{ route('admin.shop-owners') }}" class="nav-link" data-key="t-shop-owners">
-                                            Shop Owners
+                                        <a href="{{ route('admin.deos') }}" class="nav-link" data-key="t-shop-owners">
+                                            Digital Entry Operators(DEO)
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="{{ route('admin.salesmen') }}" class="nav-link" data-key="t-shop-owners">
+                                            Sales Man
                                         </a>
                                     </li>
 
                                     <li class="nav-item">
-                                        <a href="{{ route('admin.verification-requests') }}" class="nav-link" data-key="t-verification-requests">
-                                            Verification Requests
+                                        <a href="" class="nav-link" data-key="t-verification-requests">
+                                            Vendor Verification Requests
                                         </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a href="{{ route('admin.blocked-users') }}" class="nav-link" data-key="t-blocked-users">
+                                        <a href="" class="nav-link" data-key="t-blocked-users">
                                             Blocked Users
                                         </a>
                                     </li>
@@ -177,11 +182,11 @@
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link menu-link" href="{{ route('admin.categories') }}">
+                            <a class="nav-link menu-link" href="{{ route('admin.categories.index') }}">
                                 <i class="ri-file-chart-line"></i> <span data-key="t-categories">  Categories</span></a>
                         </li>
                      <li class="nav-item">
-                            <a class="nav-link menu-link" href="">
+                            <a class="nav-link menu-link" href="{{ route('admin.plans.create') }}">
                                 <i class="ri-file-chart-line"></i> <span data-key="t-plans">  Plans</span></a>
                         </li>
 
@@ -196,12 +201,12 @@
                             <div class="collapse menu-dropdown" id="sidebarStaff">
                                 <ul class="nav nav-sm flex-column">
                                     <li class="nav-item">
-                                        <a href="{{ route('admin.employees') }}" class="nav-link" data-key="t-notices">
+                                        <a href="" class="nav-link" data-key="t-notices">
                                             Employees
                                         </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a href="{{ route('admin.activity-logs') }}" class="nav-link" data-key="t-announcements">
+                                        <a href="" class="nav-link" data-key="t-announcements">
                                             Activity Logs </a>
                                     </li>
                                 </ul>
@@ -218,20 +223,20 @@
                             <div class="collapse menu-dropdown" id="sidebarAdvertisement">
                                 <ul class="nav nav-sm flex-column">
                                     <li class="nav-item">
-                                        <a href="{{ route('admin.all-ads') }}" class="nav-link" data-key="t-all-ads">
+                                        <a href="" class="nav-link" data-key="t-all-ads">
                                             All Advertisements
                                         </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a href="{{ route('admin.create-ads') }}" class="nav-link" data-key="t-create-ad">
+                                        <a href="" class="nav-link" data-key="t-create-ad">
                                             Create New Ad </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a href="{{ route('admin.pending-ads') }}" class="nav-link" data-key="t-pending-ad">
+                                        <a href="" class="nav-link" data-key="t-pending-ad">
                                             Pending Ads </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a href="{{ route('admin.ad-slots-management') }}" class="nav-link" data-key="t-pending-ad">
+                                        <a href="" class="nav-link" data-key="t-pending-ad">
                                             Ads Slots Management </a>
                                     </li>
                                 </ul>
@@ -246,16 +251,16 @@
                             <div class="collapse menu-dropdown" id="sidebarOffer">
                                 <ul class="nav nav-sm flex-column">
                                     <li class="nav-item">
-                                        <a href="{{ route('admin.all-offers') }}" class="nav-link" data-key="t-all-offers">
+                                        <a href="" class="nav-link" data-key="t-all-offers">
                                             All Offers
                                         </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a href="{{ route('admin.create-offer') }}" class="nav-link" data-key="t-create-offer">
+                                        <a href="" class="nav-link" data-key="t-create-offer">
                                             Create Offer </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a href="{{ route('admin.scheduled-offers') }}" class="nav-link" data-key="t-scheduled-offers">
+                                        <a href="" class="nav-link" data-key="t-scheduled-offers">
                                             Scheduled Offers </a>
                                     </li>
                                 </ul>
@@ -271,20 +276,20 @@
                             <div class="collapse menu-dropdown" id="sidebarReward">
                                 <ul class="nav nav-sm flex-column">
                                     <li class="nav-item">
-                                        <a href="{{ route('admin.daily-challenges') }}" class="nav-link" data-key="t-challenges">
+                                        <a href="" class="nav-link" data-key="t-challenges">
                                             Daily Challenges
                                         </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a href="{{ route('admin.spin-win') }}" class="nav-link" data-key="t-spin">
+                                        <a href="" class="nav-link" data-key="t-spin">
                                             Spin & Win Setup </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a href="{{ route('admin.scratch-cards') }}" class="nav-link" data-key="t-scratch-cards">
+                                        <a href="" class="nav-link" data-key="t-scratch-cards">
                                             Scratch Cards </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a href="{{ route('admin.reward-rules') }}" class="nav-link" data-key="t-reward-rules">
+                                        <a href="" class="nav-link" data-key="t-reward-rules">
                                             Reward Rules </a>
                                     </li>
                                 </ul>
@@ -300,16 +305,16 @@
                             <div class="collapse menu-dropdown" id="sidebarGift">
                                 <ul class="nav nav-sm flex-column">
                                     <li class="nav-item">
-                                        <a href="{{ route('admin.gift-card-management') }}" class="nav-link" data-key="t-gift-card-management">
+                                        <a href="" class="nav-link" data-key="t-gift-card-management">
                                             Gift Card Management
                                         </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a href="{{ route('admin.wallet-transactions') }}" class="nav-link" data-key="t-wallet-transactions">
+                                        <a href="" class="nav-link" data-key="t-wallet-transactions">
                                             Wallet Transactions </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a href="{{ route('admin.redemption-requests') }}" class="nav-link" data-key="t-redemption">
+                                        <a href="" class="nav-link" data-key="t-redemption">
                                             Redemption Requests </a>
                                     </li>
                                 </ul>
@@ -325,23 +330,23 @@
                             <div class="collapse menu-dropdown" id="sidebarInfo">
                                 <ul class="nav nav-sm flex-column">
                                     <li class="nav-item">
-                                        <a href="{{ route('admin.panchayath-notices') }}" class="nav-link" data-key="t-notices">
+                                        <a href="" class="nav-link" data-key="t-notices">
                                             Panchayath Notices
                                         </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a href="{{ route('admin.emergency-contacts') }}" class="nav-link" data-key="t-emergency-contacts">
+                                        <a href="" class="nav-link" data-key="t-emergency-contacts">
                                             Emergency Contacts </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a href="{{ route('admin.local-announcements') }}" class="nav-link" data-key="t-announcements">
+                                        <a href="" class="nav-link" data-key="t-announcements">
                                             Local Announcements </a>
                                     </li>
                                 </ul>
                             </div>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link menu-link" href="{{ route('admin.reports') }}">
+                            <a class="nav-link menu-link" href="{">
                                 <i class="ri-file-chart-line"></i> <span data-key="t-report">Reports</span></a>
                         </li>
 
@@ -355,31 +360,31 @@
                             <div class="collapse menu-dropdown" id="sidebarProfile">
                                 <ul class="nav nav-sm flex-column">
                                     <li class="nav-item">
-                                        <a href="{{ route('admin.general-settings') }}" class="nav-link" data-key="t-notices">
+                                        <a href="" class="nav-link" data-key="t-notices">
                                             General Settings
                                         </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a href="{{ route('admin.app-configuration') }}" class="nav-link" data-key="t-emergency-contacts">
+                                        <a href="" class="nav-link" data-key="t-emergency-contacts">
                                             App Configuration </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a href="{{ route('admin.locality-setup') }}" class="nav-link" data-key="t-announcements">
+                                        <a href="" class="nav-link" data-key="t-announcements">
                                             Panchayath / Locality Setup </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a href="{{ route('admin.notification-settings') }}" class="nav-link" data-key="t-announcements">
+                                        <a href="" class="nav-link" data-key="t-announcements">
                                             Notification Settings</a>
                                     </li>
                                 </ul>
                             </div>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link menu-link" href="{{ route('admin.profile') }}">
+                            <a class="nav-link menu-link" href="">
                                 <i class="ri-file-chart-line"></i> <span data-key="t-profile">Profile</span></a>
                         </li>
                         <li class="nav-item">
-                            <form method="POST" action="{{ route('admin.logout') }}">
+                            <form method="POST" action="">
                                 @csrf
                                 <button type="submit" class="nav-link menu-link btn btn-link ">
                                     <i class="ri-file-chart-line"></i>
