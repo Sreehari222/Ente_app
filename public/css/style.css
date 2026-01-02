@@ -1,0 +1,90 @@
+.plans-section {
+    padding: 60px 0;
+    background: white;
+    font-family: "Poppins", sans-serif;
+}
+
+.section-title {
+    text-align: center;
+    font-size: 32px;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.section-subtitle {
+    text-align: center;
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 40px;
+}
+
+.plans-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 25px;
+}
+
+.plan-card {
+    background: #ffffff;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e5e7eb;
+    transition: 0.3s ease;
+}
+
+.plan-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+}
+
+.plan-card h3 {
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.plan-sub {
+    font-size: 14px;
+    color: #777;
+    margin-bottom: 20px;
+}
+
+.join-btn {
+    width: 100%;
+    padding: 10px 0;
+    background: #fff;
+    border: 2px solid #333;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: 0.3s ease;
+    margin-bottom: 20px;
+}
+
+.join-btn:hover {
+    background: #333;
+    color: #fff;
+}
+
+.plan-features {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.plan-features li {
+    margin-bottom: 10px;
+    font-size: 15px;
+    position: relative;
+    padding-left: 25px;
+}
+
+.plan-features li:before {
+    content: "✔";
+    position: absolute;
+    left: 0;
+    color: green;
+    font-weight: bold;
+}

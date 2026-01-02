@@ -1,0 +1,274 @@
+
+/*# sourceMappingURL=custom.min.css.map */
+.prize-card {
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: none;
+            overflow: hidden;
+            border-radius: 12px;
+        }
+        .prize-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        .prize-segment {
+            height: 20px;
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+        .prize-segment::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            background: linear-gradient(90deg, rgba(255,255,255,0.3) 0%, transparent 50%, rgba(255,255,255,0.3) 100%);
+        }
+        .probability-bar {
+            background: linear-gradient(90deg, #28a745 var(--width), #e9ecef var(--width));
+            height: 8px;
+            border-radius: 4px;
+        }
+        .scratch-card {
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: none;
+            overflow: hidden;
+            border-radius: 12px;
+            position: relative;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        }
+        .scratch-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        .scratch-preview {
+            height: 150px;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            border-radius: 8px 8px 0 0;
+            position: relative;
+            overflow: hidden;
+        }
+        .scratch-preview::before {
+            content: 'Scratch Here';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        .probability-bar {
+            background: linear-gradient(90deg, #28a745 var(--width), #e9ecef var(--width));
+            height: 8px;
+            border-radius: 4px;
+        }
+        .reward-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 0.75rem;
+        }
+        /* listings.css - Styles for All Listings Page */
+
+.listing-card {
+    transition: transform 0.2s ease-in-out;
+    border: 1px solid #e9ecef;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+.listing-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.listing-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+}
+
+.service-icon {
+    background-color: rgba(13, 110, 253, 0.1);
+    color: #0d6efd;
+}
+
+.shop-icon {
+    background-color: rgba(25, 135, 84, 0.1);
+    color: #198754;
+}
+.listing-card {
+        transition: transform 0.2s ease-in-out;
+        border: 1px solid #e9ecef;
+        border-radius: 0.75rem;
+        overflow: hidden;
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    }
+    .listing-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    }
+    .listing-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+    }
+    .service-icon { background-color: rgba(13, 110, 253, 0.1); color: #0d6efd; }
+    .shop-icon { background-color: rgba(25, 135, 84, 0.1); color: #198754; }
+    .pending-badge { background-color: rgba(255, 193, 7, 0.1); color: #ffc107; border: 1px solid #ffc107; }
+    .approval-actions .btn { font-size: 0.75rem; }
+
+.listing-card {
+        transition: transform 0.2s ease-in-out;
+        border: 1px solid #e9ecef;
+        border-radius: 0.75rem;
+        overflow: hidden;
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    }
+    .listing-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    }
+    .listing-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+    }
+    .service-icon { background-color: rgba(13, 110, 253, 0.1); color: #0d6efd; }
+    .shop-icon { background-color: rgba(25, 135, 84, 0.1); color: #198754; }
+    .featured-badge { background-color: rgba(220, 53, 69, 0.1); color: #dc3545; border: 1px solid #dc3545; font-weight: bold; }
+    .premium-icon { position: absolute; top: 10px; right: 10px; background: linear-gradient(45deg, #ffc107, #fd7e14); border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; color: white; }
+.category-section {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border-radius: 1rem;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+    }
+    .category-item {
+        transition: all 0.3s ease;
+        border: none;
+        background: white;
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+        box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.05);
+    }
+    .category-item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    }
+    .category-icon {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        margin-bottom: 1rem;
+        color: white;
+    }
+    .service-category .category-icon { background: linear-gradient(135deg, #0d6efd, #6610f2); }
+    .shop-category .category-icon { background: linear-gradient(135deg, #198754, #20c997); }
+    .category-stats {
+        display: flex;
+        justify-content: space-around;
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid #dee2e6;
+    }
+    .stat-item {
+        text-align: center;
+    }
+    .stat-number { font-size: 1.5rem; font-weight: bold; color: #0d6efd; }
+    .add-category-btn {
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #0d6efd, #6610f2);
+        color: white;
+        border: none;
+        font-size: 1.5rem;
+        box-shadow: 0 0.5rem 1rem rgba(13, 110, 253, 0.3);
+        z-index: 1000;
+    }
+    .add-category-btn:hover { transform: scale(1.1); }
+    .ad-card {
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .ad-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    }
+    .card-img-top {
+        height: 150px;
+        object-fit: cover;
+    }
+    .prize-card {
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .prize-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    }
+    .prize-segment {
+        height: 20px;
+        border-radius: 10px;
+    }
+    .probability-bar {
+        height: 4px;
+        background: var(--bs-primary);
+        border-radius: 2px;
+        width: var(--width, 0%);
+    }
+    .scratch-card {
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .scratch-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    }
+    .scratch-preview {
+        height: 120px;
+        border-radius: 8px 8px 0 0;
+        position: relative;
+        overflow: hidden;
+        color: white;
+        font-weight: bold;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    }
+    .reward-badge {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        z-index: 1;
+    }
+    .probability-bars {
+        height: 4px;
+        background: var(--bs-primary);
+        border-radius: 2px;
+        width: var(--width, 0%);
+    }
+
+
+
+
