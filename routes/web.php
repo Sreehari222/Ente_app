@@ -11,6 +11,8 @@ use App\Http\Controllers\Admin\DeoController;
 use App\Http\Controllers\Admin\SalesmanController;
 use App\Http\Controllers\Admin\VerificationController;
 use App\Http\Controllers\RegisterController\UserRegisterController;
+use App\Http\Controllers\Salesman\VendorController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -119,12 +121,16 @@ Route::middleware(['auth', 'role:deo'])
 | SALESMAN
 |--------------------------------------------------------------------------
 */
-Route::middleware(['auth', 'role:salesman'])
+
+    Route::middleware(['auth', 'role:salesman'])
     ->prefix('salesman')
-    ->group(function () {
-        Route::get('/dashboard', [App\Http\Controllers\Salesman\DashboardController::class, 'index'])
-            ->name('salesman.dashboard');
+    ->name('salesman.')->group(function () {
+
+        Route::get('/dashboard', [App\Http\Controllers\Salesman\DashboardController::class, 'index'])->name('dashboard');
+        Route::get('/add-vendor', [VendorController::class, 'create'])->name('add-vendor');
+        Route::get('/vendor-list', [VendorController::class, 'index'])->name('vendor-list');
     });
+
 
 /*
 |--------------------------------------------------------------------------
