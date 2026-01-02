@@ -1,6 +1,7 @@
 {{-- resources/views/layouts/admin.blade.php --}}
 <!doctype html>
-<html lang="en" data-layout="vertical" data-topbar="light" data-sidebar="dark" data-sidebar-size="lg" data-sidebar-image="none" data-preloader="disable" data-theme="default" data-theme-colors="default">
+<html lang="en" data-layout="vertical" data-topbar="light" data-sidebar="dark" data-sidebar-size="lg"
+    data-sidebar-image="none" data-preloader="disable" data-theme="default" data-theme-colors="default">
 
 <head>
     <meta charset="utf-8" />
@@ -44,7 +45,9 @@
                                 </span>
                             </a>
                         </div>
-                        <button type="button" class="btn btn-sm px-3 fs-16 header-item vertical-menu-btn topnav-hamburger material-shadow-none" id="topnav-hamburger-icon">
+                        <button type="button"
+                            class="btn btn-sm px-3 fs-16 header-item vertical-menu-btn topnav-hamburger material-shadow-none"
+                            id="topnav-hamburger-icon">
                             <span class="hamburger-icon">
                                 <span></span>
                                 <span></span>
@@ -54,34 +57,46 @@
                         {{-- App Search --}}
                         <form class="app-search d-none d-md-block">
                             <div class="position-relative">
-                                <input type="text" class="form-control" placeholder="Search..." autocomplete="off" id="search-options" value="">
+                                <input type="text" class="form-control" placeholder="Search..." autocomplete="off"
+                                    id="search-options" value="">
                                 <span class="mdi mdi-magnify search-widget-icon"></span>
-                                <span class="mdi mdi-close-circle search-widget-icon search-widget-icon-close d-none" id="search-close-options"></span>
+                                <span class="mdi mdi-close-circle search-widget-icon search-widget-icon-close d-none"
+                                    id="search-close-options"></span>
                             </div>
                         </form>
                     </div>
                     <div class="d-flex align-items-center">
                         <div class="ms-1 header-item d-none d-sm-flex">
-                            <button type="button" class="btn btn-icon btn-topbar material-shadow-none btn-ghost-secondary rounded-circle light-dark-mode">
+                            <button type="button"
+                                class="btn btn-icon btn-topbar material-shadow-none btn-ghost-secondary rounded-circle light-dark-mode">
                                 <i class='bx bx-moon fs-22'></i>
                             </button>
                         </div>
                         <div class="dropdown ms-sm-3 header-item topbar-user">
-                            <button type="button" class="btn material-shadow-none" id="page-header-user-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <button type="button" class="btn material-shadow-none" id="page-header-user-dropdown"
+                                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="d-flex align-items-center">
-                                    <img class="rounded-circle header-profile-user" src="{{ asset('../images/users/avatar-1.jpg') }}" alt="Header Avatar">
+                                    <img class="rounded-circle header-profile-user"
+                                        src="{{ asset('../images/users/avatar-1.jpg') }}" alt="Header Avatar">
                                     <span class="text-start ms-xl-2">
-                                        <span class="d-none d-xl-inline-block ms-1 fw-medium user-name-text">Anna Adame</span>
+                                        <span class="d-none d-xl-inline-block ms-1 fw-medium user-name-text">Anna
+                                            Adame</span>
                                         <span class="d-none d-xl-block ms-1 fs-12 user-name-sub-text">Founder</span>
                                     </span>
                                 </span>
                             </button>
                             <div class="dropdown-menu dropdown-menu-end">
                                 <h6 class="dropdown-header">Welcome Anna!</h6>
-                                <a class="dropdown-item" href=""><i class="mdi mdi-account-circle text-muted fs-16 align-middle me-1"></i> <span class="align-middle">Profile</span></a>
-                                <a class="dropdown-item" href=""><i class="mdi mdi-message-text-outline text-muted fs-16 align-middle me-1"></i> <span class="align-middle">Messages</span></a>
+                                <a class="dropdown-item" href=""><i
+                                        class="mdi mdi-account-circle text-muted fs-16 align-middle me-1"></i> <span
+                                        class="align-middle">Profile</span></a>
+                                <a class="dropdown-item" href=""><i
+                                        class="mdi mdi-message-text-outline text-muted fs-16 align-middle me-1"></i>
+                                    <span class="align-middle">Messages</span></a>
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href=""><i class="mdi mdi-cog-outline text-muted fs-16 align-middle me-1"></i> <span class="align-middle">Settings</span></a>
+                                <a class="dropdown-item" href=""><i
+                                        class="mdi mdi-cog-outline text-muted fs-16 align-middle me-1"></i> <span
+                                        class="align-middle">Settings</span></a>
                                 <form method="POST" action="">
                                     @csrf
                                     <button type="submit" class="nav-link menu-link btn btn-link ">
@@ -116,7 +131,8 @@
                         <img src="{{ asset('../images/logo.png') }}" alt="" height="35">
                     </span>
                 </a>
-                <button type="button" class="btn btn-sm p-0 fs-20 header-item float-end btn-vertical-sm-hover" id="vertical-hover">
+                <button type="button" class="btn btn-sm p-0 fs-20 header-item float-end btn-vertical-sm-hover"
+                    id="vertical-hover">
                     <i class="ri-record-circle-line"></i>
                 </button>
             </div>
@@ -129,13 +145,15 @@
                         <li class="menu-title"><span data-key="t-menu">Menu</span></li>
                         <li class="nav-item">
                             <a class="nav-link menu-link" href="{{ route('admin.dashboard') }}">
-                                <i class="ri-dashboard-2-line"></i> <span data-key="t-dashboards">Dashboards</span></a>
+                                <i class="ri-dashboard-2-line"></i> <span
+                                    data-key="t-dashboards">Dashboards</span></a>
                         </li> {{-- end Dashboard Menu --}}
 
-                        <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-pages">User Management</span></li>
+                        <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-pages">User
+                                Management</span></li>
                         <li class="nav-item">
-                            <a class="nav-link menu-link" href="#sidebarUser" data-bs-toggle="collapse" role="button"
-                                aria-expanded="false" aria-controls="sidebarUser">
+                            <a class="nav-link menu-link" href="#sidebarUser" data-bs-toggle="collapse"
+                                role="button" aria-expanded="false" aria-controls="sidebarUser">
                                 <i class="ri-account-circle-line"></i>
                                 <span data-key="t-User">Users</span>
                             </a>
@@ -146,23 +164,6 @@
                                     <li class="nav-item">
                                         <a href="" class="nav-link" data-key="t-allusers">
                                             App/Web Users
-                                        </a>
-                                    </li>
-
-                                    <li class="nav-item">
-                                        <a href="{{ route('admin.area-operators') }}" class="nav-link" data-key="t-providers">
-                                            Area Operators
-                                        </a>
-                                    </li>
-
-                                    <li class="nav-item">
-                                        <a href="{{ route('admin.deos') }}" class="nav-link" data-key="t-shop-owners">
-                                            Digital Entry Operators(DEO)
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="{{ route('admin.salesmen') }}" class="nav-link" data-key="t-shop-owners">
-                                            Sales Man
                                         </a>
                                     </li>
 
@@ -183,40 +184,54 @@
 
                         <li class="nav-item">
                             <a class="nav-link menu-link" href="{{ route('admin.categories.index') }}">
-                                <i class="ri-file-chart-line"></i> <span data-key="t-categories">  Categories</span></a>
-                        </li>
-                     <li class="nav-item">
-                            <a class="nav-link menu-link" href="{{ route('admin.plans.create') }}">
-                                <i class="ri-file-chart-line"></i> <span data-key="t-plans">  Plans</span></a>
-                        </li>
-
-                        <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-pages">Staff Management Section</span>
+                                <i class="ri-file-chart-line"></i> <span data-key="t-categories">
+                                    Categories</span></a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link menu-link" href="#sidebarStaff" data-bs-toggle="collapse" role="button"
-                                aria-expanded="false" aria-controls="sidebarStaff">
+                            <a class="nav-link menu-link" href="{{ route('admin.plans.create') }}">
+                                <i class="ri-file-chart-line"></i> <span data-key="t-plans"> Plans</span></a>
+                        </li>
+
+                        <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-pages">Staff Management
+                                Section</span>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link menu-link" href="#sidebarStaff" data-bs-toggle="collapse"
+                                role="button" aria-expanded="false" aria-controls="sidebarStaff">
                                 <i class="ri-team-line"></i>
                                 <span data-key="t-list">Staff Management </span>
                             </a>
                             <div class="collapse menu-dropdown" id="sidebarStaff">
                                 <ul class="nav nav-sm flex-column">
                                     <li class="nav-item">
-                                        <a href="" class="nav-link" data-key="t-notices">
-                                            Employees
+                                        <a href="{{ route('admin.area-operators') }}" class="nav-link"
+                                            data-key="t-providers">
+                                            Area Operators
+                                        </a>
+                                    </li>
+
+                                    <li class="nav-item">
+                                        <a href="{{ route('admin.deos') }}" class="nav-link"
+                                            data-key="t-shop-owners">
+                                            Digital Entry Operators(DEO)
                                         </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a href="" class="nav-link" data-key="t-announcements">
-                                            Activity Logs </a>
+                                        <a href="{{ route('admin.salesmen') }}" class="nav-link"
+                                            data-key="t-shop-owners">
+                                            Sales Man
+                                        </a>
                                     </li>
+
                                 </ul>
                             </div>
                         </li>
 
-                        <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-pages">Pages</span></li>
+                        <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-pages">Pages</span>
+                        </li>
                         <li class="nav-item">
-                            <a class="nav-link menu-link" href="#sidebarAdvertisement" data-bs-toggle="collapse" role="button"
-                                aria-expanded="false" aria-controls="sidebarAdvertisement">
+                            <a class="nav-link menu-link" href="#sidebarAdvertisement" data-bs-toggle="collapse"
+                                role="button" aria-expanded="false" aria-controls="sidebarAdvertisement">
                                 <i class="ri-megaphone-line"></i>
                                 <span data-key="t-list">Advertisements </span>
                             </a>
@@ -243,8 +258,8 @@
                             </div>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link menu-link" href="#sidebarOffer" data-bs-toggle="collapse" role="button"
-                                aria-expanded="false" aria-controls="sidebarOffer">
+                            <a class="nav-link menu-link" href="#sidebarOffer" data-bs-toggle="collapse"
+                                role="button" aria-expanded="false" aria-controls="sidebarOffer">
                                 <i class="ri-coupon-3-line"></i>
                                 <span data-key="t-list">Offers & Promotions </span>
                             </a>
@@ -268,8 +283,8 @@
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link menu-link" href="#sidebarReward" data-bs-toggle="collapse" role="button"
-                                aria-expanded="false" aria-controls="sidebarReward">
+                            <a class="nav-link menu-link" href="#sidebarReward" data-bs-toggle="collapse"
+                                role="button" aria-expanded="false" aria-controls="sidebarReward">
                                 <i class="ri-trophy-line"></i>
                                 <span data-key="t-list">Rewards System </span>
                             </a>
@@ -297,8 +312,8 @@
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link menu-link" href="#sidebarGift" data-bs-toggle="collapse" role="button"
-                                aria-expanded="false" aria-controls="sidebarGift">
+                            <a class="nav-link menu-link" href="#sidebarGift" data-bs-toggle="collapse"
+                                role="button" aria-expanded="false" aria-controls="sidebarGift">
                                 <i class="ri-gift-line"></i>
                                 <span data-key="t-list"> Gift Cards & Wallet </span>
                             </a>
@@ -320,10 +335,11 @@
                                 </ul>
                             </div>
                         </li>
-                        <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-pages">Information Section</span></li>
+                        <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-pages">Information
+                                Section</span></li>
                         <li class="nav-item">
-                            <a class="nav-link menu-link" href="#sidebarInfo" data-bs-toggle="collapse" role="button"
-                                aria-expanded="false" aria-controls="sidebarInfo">
+                            <a class="nav-link menu-link" href="#sidebarInfo" data-bs-toggle="collapse"
+                                role="button" aria-expanded="false" aria-controls="sidebarInfo">
                                 <i class="ri-information-line"></i>
                                 <span data-key="t-list">Information & Notices </span>
                             </a>
@@ -350,10 +366,11 @@
                                 <i class="ri-file-chart-line"></i> <span data-key="t-report">Reports</span></a>
                         </li>
 
-                        <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-pages">Profile & Settings</span></li>
+                        <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-pages">Profile &
+                                Settings</span></li>
                         <li class="nav-item">
-                            <a class="nav-link menu-link" href="#sidebarProfile" data-bs-toggle="collapse" role="button"
-                                aria-expanded="false" aria-controls="sidebarProfile">
+                            <a class="nav-link menu-link" href="#sidebarProfile" data-bs-toggle="collapse"
+                                role="button" aria-expanded="false" aria-controls="sidebarProfile">
                                 <i class="ri-settings-3-line"></i>
                                 <span data-key="t-list">Settings</span>
                             </a>
