@@ -403,29 +403,36 @@
                                         </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a href="" class="nav-link" data-key="t-emergency-contacts">
+                                        <a href="{{ route('admin.settings.app') }}" class="nav-link"
+                                            data-key="t-emergency-contacts">
                                             App Configuration </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a href="" class="nav-link" data-key="t-announcements">
+                                        <a href="{{ route('admin.settings.notifications') }}" class="nav-link"
+                                            data-key="t-announcements">
                                             Notification Settings</a>
                                     </li>
                                 </ul>
                             </div>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link menu-link" href="">
-                                <i class="ri-file-chart-line"></i> <span data-key="t-profile">Profile</span></a>
+                        <li class="nav-item {{ request()->routeIs('profile.*') ? 'active' : '' }}">
+                            <a class="nav-link menu-link {{ request()->routeIs('profile.*') ? 'active' : '' }}"
+                                href="{{ route('admin.profile.show') }}">
+                                <i class="ri-file-chart-line"></i>
+                                <span data-key="t-profile">Profile</span>
+                            </a>
                         </li>
+
                         <li class="nav-item">
-                            <form method="POST" action="">
+                            <form method="POST" action="{{ route('logout') }}">
                                 @csrf
-                                <button type="submit" class="nav-link menu-link btn btn-link ">
+                                <button type="submit" class="nav-link menu-link btn btn-link">
                                     <i class="ri-file-chart-line"></i>
                                     <span data-key="t-logout">Logout</span>
                                 </button>
                             </form>
                         </li>
+
 
                     </ul>
                 </div>

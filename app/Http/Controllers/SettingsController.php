@@ -27,7 +27,7 @@ class SettingsController extends Controller
         ]);
 
         // Save normal settings
-        foreach ($request->except('_token','logo','favicon') as $key => $value) {
+        foreach ($request->except('_token', 'logo', 'favicon') as $key => $value) {
             Setting::updateOrCreate(
                 ['key' => $key],
                 ['value' => is_array($value) ? json_encode($value) : $value]
@@ -37,13 +37,13 @@ class SettingsController extends Controller
         // Logo upload
         if ($request->hasFile('logo')) {
             $path = $request->file('logo')->store('branding', 'public');
-            Setting::updateOrCreate(['key'=>'logo'], ['value'=>$path]);
+            Setting::updateOrCreate(['key' => 'logo'], ['value' => $path]);
         }
 
         // Favicon upload
         if ($request->hasFile('favicon')) {
             $path = $request->file('favicon')->store('branding', 'public');
-            Setting::updateOrCreate(['key'=>'favicon'], ['value'=>$path]);
+            Setting::updateOrCreate(['key' => 'favicon'], ['value' => $path]);
         }
 
         // Maintenance Mode
@@ -56,6 +56,31 @@ class SettingsController extends Controller
         return response()->json([
             'status'  => true,
             'message' => 'General settings updated successfully'
+        ]);
+    }
+
+    private function loadSettings()
+    {
+        return Setting::pluck('value', 'key')->toArray();
+    }
+
+    /* ===============================
+        APP CONFIGURATION
+    ================================*/
+    public function appConfig()
+    {
+        return view('admin.settings.app-configuration', [
+            'settings' => $this->loadSettings()
+        ]);
+    }
+
+    /* ===============================
+        NOTIFICATION SETTINGS
+    ================================*/
+    public function notifications()
+    {
+        return view('admin.settings.notifications', [
+            'settings' => $this->loadSettings()
         ]);
     }
 }

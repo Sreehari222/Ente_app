@@ -106,15 +106,16 @@ Route::middleware(['auth', 'role:admin'])
 
         Route::get('/settings/general', [SettingsController::class, 'general'])->name('settings.general');
         Route::post('/admin/settings/general', [SettingsController::class, 'store'])->name('settings.general.store');
-        Route::get('/settings/app', [SettingsController::class, 'app'])->name('settings.app');
+        Route::get('/settings/app', [SettingsController::class, 'appConfig'])->name('settings.app');
         Route::get('/settings/locality', [SettingsController::class, 'locality'])->name('settings.locality');
         Route::get('/settings/notifications', [SettingsController::class, 'notifications'])->name('settings.notifications');
-
+        Route::post('/save', [SettingsController::class, 'store'])->name('store');
         // Profile
         Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
-
+        Route::put('/profile/update', [ProfileController::class,'update'])->name('profile.update');
+         Route::post('/profile/change-password', [ProfileController::class,'changePassword'])->name('profile.change-password');
         // Logout
-        Route::post('/logout', [ProfileController::class, 'logout'])->name('logout');
+        Route::post('/logout', action: [ProfileController::class, 'logout'])->name('logout');
     });
 
 /*
@@ -172,10 +173,6 @@ Route::middleware(['auth', 'role:user'])
 
 
 Route::middleware('auth')->group(function () {
-
-    Route::get('/profile', function () {
-        return view('profile.show');
-    })->name('profile.show');
 
     Route::get('/messages', function () {
         return view('messages.index');
