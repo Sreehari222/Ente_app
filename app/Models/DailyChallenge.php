@@ -1,0 +1,17 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class DailyChallenge extends Model
+{
+    protected $fillable = [
+        'name',
+        'description',
+        'reward_points',
+        'active_date',
+        'status',
+    ];
+}
+

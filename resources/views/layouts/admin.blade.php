@@ -238,12 +238,12 @@
                             <div class="collapse menu-dropdown" id="sidebarAdvertisement">
                                 <ul class="nav nav-sm flex-column">
                                     <li class="nav-item">
-                                        <a href="" class="nav-link" data-key="t-all-ads">
+                                        <a href="{{ route('admin.all-ads') }}" class="nav-link" data-key="t-all-ads">
                                             All Advertisements
                                         </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a href="" class="nav-link" data-key="t-create-ad">
+                                        <a href="{{ route('admin.create-ads') }}" class="nav-link" data-key="t-create-ad">
                                             Create New Ad </a>
                                     </li>
                                     <li class="nav-item">
@@ -266,18 +266,18 @@
                             <div class="collapse menu-dropdown" id="sidebarOffer">
                                 <ul class="nav nav-sm flex-column">
                                     <li class="nav-item">
-                                        <a href="" class="nav-link" data-key="t-all-offers">
+                                        <a href="{{ route('admin.all-offers') }}" class="nav-link" data-key="t-all-offers">
                                             All Offers
                                         </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a href="" class="nav-link" data-key="t-create-offer">
+                                        <a href="{{ route('admin.create-offer') }}" class="nav-link" data-key="t-create-offer">
                                             Create Offer </a>
                                     </li>
-                                    <li class="nav-item">
-                                        <a href="" class="nav-link" data-key="t-scheduled-offers">
+                                    <!-- <li class="nav-item">
+                                        <a href="{{ route('admin.scheduled-offers') }}" class="nav-link" data-key="t-scheduled-offers">
                                             Scheduled Offers </a>
-                                    </li>
+                                    </li> -->
                                 </ul>
                             </div>
                         </li>
@@ -291,7 +291,7 @@
                             <div class="collapse menu-dropdown" id="sidebarReward">
                                 <ul class="nav nav-sm flex-column">
                                     <li class="nav-item">
-                                        <a href="" class="nav-link" data-key="t-challenges">
+                                        <a href="{{ route('admin.daily-challenges') }}" class="nav-link" data-key="t-challenges">
                                             Daily Challenges
                                         </a>
                                     </li>

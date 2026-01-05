@@ -12,6 +12,9 @@ use App\Http\Controllers\Admin\SalesmanController;
 use App\Http\Controllers\Admin\VerificationController;
 use App\Http\Controllers\RegisterController\UserRegisterController;
 use App\Http\Controllers\Salesman\VendorController;
+use App\Http\Controllers\Admin\AdvertisementController;
+use App\Http\Controllers\Admin\OfferController;
+use App\Http\Controllers\Admin\RewardController;
 
 
 /*
@@ -72,6 +75,28 @@ Route::middleware(['auth', 'role:admin'])
         Route::get('/plans/{plan}/edit', [PlanController::class, 'edit'])->name('plans.edit');
         Route::put('/plans/{plan}', [PlanController::class, 'update'])->name('plans.update');
         Route::delete('/plans/{plan}', [PlanController::class, 'destroy'])->name('plans.destroy');
+
+        //advertinements
+        Route::get('/ads', [AdvertisementController::class, 'allAds'])->name('all-ads');
+       // Route::get('/advertisements/create', [AdvertisementController::class, 'create'])->name('create-ads');
+        Route::get('/ads/create', [AdvertisementController::class, 'create'])->name('create-ads');
+        Route::post('/ads/store', [AdvertisementController::class, 'store'])->name('ads.store');
+        Route::get('/admin/ads/{id}/edit', [AdvertisementController::class, 'edit'])->name('admin.ads.edit');
+        Route::delete('/admin/ads/{id}', [AdvertisementController::class, 'destroy'])->name('admin.ads.destroy');
+        Route::put('/admin/ads/{id}', [AdvertisementController::class, 'update'])->name('admin.ads.update');
+
+        // Offers
+        Route::get('/offers', [OfferController::class, 'alloffer'])->name('all-offers');
+        Route::get('/offers/create', [OfferController::class, 'create'])->name('create-offer');
+        Route::post('/offers/store', [OfferController::class, 'store'])->name('offers.store');
+        Route::delete('/offers/{offer}', [OfferController::class, 'destroy'])->name('offers.destroy');
+        Route::get('/offers/scheduled', [OfferController::class, 'scheduledOffers'])->name('scheduled-offers');
+
+        //reward management
+        Route::get('/daily-challenges', [RewardController::class, 'dailyChallenges'])->name('daily-challenges');
+        Route::get('/daily-challenges/create', [RewardController::class, 'createDailyChallenge'])->name('daily_challenges.create');
+        Route::post('/daily-challenges/store', [RewardController::class, 'storeDailyChallenge'])->name('daily_challenge.store');
+        Route::delete('/daily-challenges/{id}', [RewardController::class, 'deleteDailyChallenge'])->name('daily_challenges.delete');
         /*
         |--------------------------------------------------------------------------
         | VERIFICATION & BLOCKING
@@ -80,15 +105,9 @@ Route::middleware(['auth', 'role:admin'])
        Route::get('/vendor-verifications', [VerificationController::class, 'vendors'])->name('vendor-verifications');
 
        Route::post('/vendor-verifications/{id}/approve', [VerificationController::class, 'approve'])->name('vendor-verifications.approve');
-
-        Route::delete('/vendor-verifications/{id}/reject', [VerificationController::class, 'reject'])
-            ->name('vendor-verifications.reject');
-
-        Route::get('/blocked-users', [BlockedUserController::class, 'index'])
-            ->name('blocked-users');
-
-        Route::patch('/blocked-users/{id}/unblock', [BlockedUserController::class, 'unblock'])
-            ->name('blocked-users.unblock');
+       Route::delete('/vendor-verifications/{id}/reject', [VerificationController::class, 'reject'])->name('vendor-verifications.reject');
+       Route::get('/blocked-users', [BlockedUserController::class, 'index'])->name('blocked-users');
+       Route::patch('/blocked-users/{id}/unblock', [BlockedUserController::class, 'unblock'])->name('blocked-users.unblock');
     });
 
 
