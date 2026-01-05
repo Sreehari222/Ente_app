@@ -30,17 +30,17 @@
 
 
 
-    <form action="" method="POST" enctype="multipart/form-data">
+    <form action="{{ route('salesman.vendors.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
 
         {{-- ================= SHOP DETAILS ================= --}}
         <div class="card mb-4">
             <div class="card-body">
-                <h5 class="mb-4"><i class="ri-store-2-line me-1"></i> Shop Details</h5>
+                <h5 class="mb-4"><i class="ri-store-2-line me-1"></i> Shop/Services Details</h5>
 
                 <div class="row g-3">
                     <div class="col-md-6">
-                        <label class="form-label">Shop Name *</label>
+                        <label class="form-label">Shop Name/Serveice Name *</label>
                         <input type="text" name="shop_name" class="form-control" required>
                     </div>
 
@@ -91,12 +91,16 @@
         {{-- ================= CATEGORY & PLAN ================= --}}
         <div class="card mb-4">
             <div class="card-body">
-                <h5 class="mb-4"><i class="ri-list-check-2 me-1"></i> Category & Plan</h5>
+                <h5 class="mb-4">
+                    <i class="ri-list-check-2 me-1"></i> Category & Plan
+                </h5>
 
                 <div class="row g-3">
                     {{-- Main Category --}}
                     <div class="col-md-6">
-                        <label class="form-label">Main Category <span class="text-danger">*</span></label>
+                        <label class="form-label">
+                            Main Category <span class="text-danger">*</span>
+                        </label>
                         <select name="main_category_id" id="main_category" class="form-select" required>
                             <option value="">Select</option>
                             @foreach ($mainCategories as $main)
@@ -105,26 +109,34 @@
                         </select>
                     </div>
 
-                    {{-- Category --}}
+                    {{-- Sub Category --}}
                     <div class="col-md-6">
-                        <label class="form-label">Category <span class="text-danger">*</span></label>
+                        <label class="form-label">
+                            Category <span class="text-danger">*</span>
+                        </label>
                         <select name="category_id" id="category_id" class="form-select" required disabled>
                             <option value="">Select</option>
                         </select>
                     </div>
 
-                    <div class="mb-3">
-                        <label class="form-label">Plan <span class="text-danger">*</span></label>
+                    {{-- Plan --}}
+                    <div class="col-md-12">
+                        <label class="form-label">
+                            Plan <span class="text-danger">*</span>
+                        </label>
                         <select name="plan_id" class="form-select" required>
                             <option value="">Select</option>
                             @foreach ($plans as $plan)
-                                <option value="{{ $plan->id }}">{{ $plan->title }} - ₹{{ $plan->amount }}</option>
+                                <option value="{{ $plan->id }}">
+                                    {{ $plan->title }} - ₹{{ $plan->amount }}
+                                </option>
                             @endforeach
                         </select>
                     </div>
                 </div>
             </div>
         </div>
+
 
         {{-- ================= TIMINGS ================= --}}
         <div class="card mb-4">
@@ -227,34 +239,44 @@
 @endsection
 
 @push('scripts')
-    <script>
-        /* SOCIAL */
-        document.getElementById('add-social').addEventListener('click', () => {
-            document.getElementById('social-wrapper').insertAdjacentHTML('beforeend', `
-    <div class="row g-2 mb-2 social-row">
-        <div class="col-md-4">
-            <select name="social_type[]" class="form-select">
-                <option value="instagram">Instagram</option>
-                <option value="facebook">Facebook</option>
-                <option value="website">Website</option>
-            </select>
-        </div>
-        <div class="col-md-7">
-            <input type="url" name="social_link[]" class="form-control">
-        </div>
-        <div class="col-md-1 text-end">
-            <button type="button" class="btn btn-danger remove-social"><i class="ri-close-line"></i></button>
-        </div>
-    </div>`);
-        });
+<script>
+document.addEventListener('DOMContentLoaded', function () {
 
-        document.addEventListener('click', e => {
-            if (e.target.closest('.remove-social')) {
-                e.target.closest('.social-row').remove();
-            }
-        });
+    const mainCategory = document.getElementById('main_category');
+    const subCategory  = document.getElementById('category_id');
 
-        /* DIGIPIN */
+    mainCategory.addEventListener('change', function () {
+
+        const parentId = this.value;
+        subCategory.innerHTML = '<option value="">Select</option>';
+        subCategory.disabled = true;
+
+        if (!parentId) return;
+
+        fetch(`{{ route('get-sub-categories', ':id') }}`.replace(':id', parentId))
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                data.forEach(item => {
+                    const option = document.createElement('option');
+                    option.value = item.id;
+                    option.textContent = item.name;
+                    subCategory.appendChild(option);
+                });
+                subCategory.disabled = false;
+            })
+            .catch(error => {
+                console.error(error);
+                alert('Unable to load sub categories');
+            });
+    });
+
+});
+/* DIGIPIN */
         document.getElementById('digipin').addEventListener('input', function() {
             this.value = this.value.toUpperCase();
             const msg = document.getElementById('digipin_msg');
@@ -269,36 +291,5 @@
                 'd-none', this.value === 'cash' || this.value === ''
             );
         });
-
-        /* IMAGE PREVIEW */
-        photo.onchange = e => {
-            photoPreview.src = URL.createObjectURL(e.target.files[0]);
-            photoPreview.classList.remove('d-none');
-        };
-
-        gallery.onchange = e => {
-            galleryPreview.innerHTML = '';
-            [...e.target.files].forEach(f => {
-                let img = document.createElement('img');
-                img.src = URL.createObjectURL(f);
-                img.className = 'img-thumbnail';
-                img.style.width = '90px';
-                galleryPreview.appendChild(img);
-            });
-        };
-        // Load categories dynamically
-        document.getElementById('main_category').addEventListener('change', function() {
-            fetch(`/provider/sub-categories/by-main/${this.value}`)
-                .then(res => res.json())
-                .then(data => {
-                    const cat = document.getElementById('category_id');
-                    cat.innerHTML = '<option value="">Select</option>';
-                    cat.disabled = false;
-
-                    data.forEach(d => {
-                        cat.innerHTML += `<option value="${d.id}">${d.name}</option>`;
-                    });
-                });
-        });
-    </script>
+</script>
 @endpush

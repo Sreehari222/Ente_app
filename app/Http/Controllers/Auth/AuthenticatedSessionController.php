@@ -49,4 +49,12 @@ class AuthenticatedSessionController extends Controller
 
         return redirect('/');
     }
+    protected function authenticated(Request $request, $user)
+    {
+        if ($user->role === 'vendor' && !$user->is_approved) {
+            Auth::logout();
+            return redirect()->route('login')
+                ->withErrors(['email' => 'Account pending admin approval']);
+        }
+    }
 }
