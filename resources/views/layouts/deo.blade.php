@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="utf-8" />
-    <title>salesman Panel</title>
+    <title>DEO Panel</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta content="Staff Management Dashboard" name="description" />
     <meta content="Themesbrand" name="author" />
@@ -150,105 +150,106 @@
                     </div>
                     <ul class="navbar-nav" id="navbar-nav">
 
-                        {{-- Main --}}
+                        {{-- MAIN --}}
                         <li class="menu-title"><span>Menu</span></li>
 
                         <li class="nav-item">
-                            <a class="nav-link menu-link {{ request()->routeIs('salesman.dashboard') ? 'active' : '' }}"
-                                href="{{ route('salesman.dashboard') }}">
+                            <a class="nav-link menu-link {{ request()->routeIs('deo.dashboard') ? 'active' : '' }}"
+                                href="{{ route('deo.dashboard') }}">
                                 <i class="ri-dashboard-2-line"></i>
                                 <span>Dashboard</span>
                             </a>
                         </li>
 
-                        {{-- Vendors --}}
-                        <li class="menu-title"><span>Vendors</span></li>
+                        {{-- SALESMAN MANAGEMENT --}}
+                        <li class="menu-title"><span>Salesman Management</span></li>
 
                         <li class="nav-item">
-                            <a class="nav-link menu-link " href="{{ route('salesman.add-vendor') }}">
-                                <i class="ri-user-add-line"></i>
-                                <span>Add Vendor</span>
-                            </a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a class="nav-link menu-link " href="{{ route('salesman.vendor-list') }}">
+                            <a class="nav-link menu-link {{ request()->routeIs('deo.salesmen.index') ? 'active' : '' }}"
+                                href="{{ route('salesmen.index') }}">
                                 <i class="ri-team-line"></i>
-                                <span>Vendor List</span>
-                            </a>
-                        </li>
-
-                        {{-- Analytics --}}
-                        <li class="menu-title"><span>Analytics</span></li>
-
-                        <li class="nav-item">
-                            <a class="nav-link menu-link" href="#">
-                                <i class="ri-bar-chart-2-line"></i>
-                                <span>Your Statistics</span>
+                                <span>My Salesmen</span>
                             </a>
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link menu-link" href="">
-                                <i class="ri-lightbulb-flash-line"></i>
-                                <span>Your Recommendations</span>
+                            <a class="nav-link menu-link {{ request()->routeIs('deo.salesmen.performance') ? 'active' : '' }}"
+                                href="{{ route('deo.salesmen.performance') }}">
+                                <i class="ri-bar-chart-box-line"></i>
+                                <span>Salesman Performance</span>
                             </a>
                         </li>
 
-                        {{-- Communication --}}
+                        {{-- VENDOR MONITORING --}}
+                        <li class="menu-title"><span>Vendor Monitoring</span></li>
+
+                        <li class="nav-item">
+                            <a class="nav-link menu-link {{ request()->routeIs('deo.vendors.index') ? 'active' : '' }}"
+                                href="">
+                                <i class="ri-store-2-line"></i>
+                                <span>All Vendors</span>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link menu-link {{ request()->routeIs('deo.vendors.pending') ? 'active' : '' }}"
+                                href="">
+                                <i class="ri-time-line"></i>
+                                <span>Pending Vendors</span>
+                            </a>
+                        </li>
+
+                        {{-- REPORTS --}}
+                        <li class="menu-title"><span>Reports & Submissions</span></li>
+
+                        <li class="nav-item">
+                            <a class="nav-link menu-link {{ request()->routeIs('deo.reports.daily') ? 'active' : '' }}"
+                                href="">
+                                <i class="ri-file-list-3-line"></i>
+                                <span>Daily Reports</span>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link menu-link {{ request()->routeIs('deo.reports.monthly') ? 'active' : '' }}"
+                                href="">
+                                <i class="ri-calendar-check-line"></i>
+                                <span>Monthly Reports</span>
+                            </a>
+                        </li>
+
+                        {{-- COMMUNICATION --}}
                         <li class="menu-title"><span>Communication</span></li>
 
                         <li class="nav-item">
-                            <a class="nav-link menu-link" href="#">
-                                <i class="ri-mail-line"></i>
-                                <span>Admin Messages / Reports</span>
+                            <a class="nav-link menu-link {{ request()->routeIs('deo.messages') ? 'active' : '' }}"
+                                href="">
+                                <i class="ri-message-3-line"></i>
+                                <span>Admin Messages</span>
                             </a>
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link menu-link" href="#">
+                            <a class="nav-link menu-link {{ request()->routeIs('deo.notifications') ? 'active' : '' }}"
+                                href="">
                                 <i class="ri-notification-3-line"></i>
                                 <span>Notifications</span>
                             </a>
                         </li>
 
-                        <li class="nav-item">
-                            <a class="nav-link menu-link" href="#">
-                                <i class="ri-alarm-line"></i>
-                                <span>Reminders</span>
-                            </a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a class="nav-link menu-link" href="#">
-                                <i class="ri-message-3-line"></i>
-                                <span>Company Messages</span>
-                            </a>
-                        </li>
-
-                        {{-- Submissions --}}
-                        <li class="menu-title"><span>Management</span></li>
-
-                        <li class="nav-item">
-                            <a class="nav-link menu-link" href="#">
-                                <i class="ri-file-list-3-line"></i>
-                                <span>Submissions</span>
-                            </a>
-                        </li>
-
-                        {{-- Account --}}
+                        {{-- ACCOUNT --}}
                         <li class="menu-title"><span>Account</span></li>
 
                         <li class="nav-item">
-                            <a class="nav-link menu-link {{ request()->routeIs('salesman.profile') ? 'active' : '' }}"
+                            <a class="nav-link menu-link {{ request()->routeIs('deo.profile') ? 'active' : '' }}"
                                 href="">
                                 <i class="ri-user-settings-line"></i>
-                                <span>Profile</span>
+                                <span>My Profile</span>
                             </a>
                         </li>
 
                         <li class="nav-item">
-                            <form method="POST" action="">
+                            <form method="POST" action="{{ route('logout') }}">
                                 @csrf
                                 <button type="submit" class="nav-link menu-link logout-btn">
                                     <i class="ri-logout-box-r-line"></i>
@@ -258,6 +259,7 @@
                         </li>
 
                     </ul>
+
 
                 </div>
             </div>

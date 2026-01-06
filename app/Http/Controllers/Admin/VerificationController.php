@@ -3,43 +3,67 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Entry;
-use Illuminate\Http\Request;
+use App\Models\VerificationRequest;
+use App\Models\User;
+use App\Models\Vendor;
 
 class VerificationController extends Controller
 {
-    public function vendors()
+    /**
+     * Show verification requests
+     */
+    public function index()
     {
-        $entries = Entry::where('is_verified', false)
+        $vendors = Vendor::where('status', 'pending')
             ->latest()
-            ->get();
+            ->paginate(10);
 
-        return view('admin.verifications.vendors', compact('entries'));
+        return view('admin.verifications.index', compact('vendors'));
     }
 
     /**
-     * Approve vendor entry
+     * Approve request
      */
     public function approve($id)
     {
-        $entry = Entry::findOrFail($id);
+        $vendor = Vendor::findOrFail($id);
 
-        $entry->update([
-            'is_verified' => true,
-            'verified_by' => auth()->id(),
-            'verified_at' => now(),
-        ]);
+        if ($vendor->status !== 'pending') {
+            return redirect()->back()->with('error', 'Vendor already processed.');
+        }
 
-        return back()->with('success', 'Vendor verified successfully');
+        $vendor->status = 'approved';
+        $vendor->approved_at = now();
+        $vendor->save();
+
+        return redirect()->back()->with('success', 'Vendor approved successfully.');
     }
 
     /**
-     * Reject vendor entry
+     * Reject request
      */
     public function reject($id)
     {
-        Entry::findOrFail($id)->delete();
+        $vendor = Vendor::findOrFail($id);
 
-        return back()->with('success', 'Vendor rejected and removed');
+        if ($vendor->status !== 'pending') {
+            return redirect()->back()->with('error', 'Vendor already processed.');
+        }
+
+        $vendor->status = 'rejected';
+        $vendor->approved_at = now(); // optional
+        $vendor->save();
+
+        return redirect()->back()->with('success', 'Vendor rejected successfully.');
+    }
+    public function show($id)
+    {
+        $vendor = Vendor::with([
+            'mainCategory',
+            'category',
+            'plan'
+        ])->findOrFail($id);
+
+        return view('admin.verifications.show', compact('vendor'));
     }
 }

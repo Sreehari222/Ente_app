@@ -47,6 +47,16 @@ class AuthenticatedSessionController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/');
+        return redirect('/login');
+    }
+
+
+    protected function authenticated(Request $request, $user)
+    {
+        if ($user->role === 'vendor' && !$user->is_approved) {
+            Auth::logout();
+            return redirect()->route('login')
+                ->withErrors(['email' => 'Account pending admin approval']);
+        }
     }
 }

@@ -25,6 +25,7 @@ class UserRegisterController extends Controller
     {
         return view('admin.area_operator_register');
     }
+    
     public function storeAreaOperator(Request $request)
     {
         $request->validate([

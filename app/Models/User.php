@@ -21,7 +21,11 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
+        'area_operator_id',
+        'deo_id',
     ];
+
 
     /**
      * The attributes that should be hidden for serialization.
@@ -65,5 +69,6 @@ class User extends Authenticatable
         return $this->belongsTo(User::class, 'deo_id');
     }
 
-   
+
 }
+

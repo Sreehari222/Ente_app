@@ -72,40 +72,55 @@
                                 <i class='bx bx-moon fs-22'></i>
                             </button>
                         </div>
+                        @php
+                            $user = auth()->user();
+                        @endphp
+
                         <div class="dropdown ms-sm-3 header-item topbar-user">
-                            <button type="button" class="btn material-shadow-none" id="page-header-user-dropdown"
-                                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <button type="button" class="btn material-shadow-none" data-bs-toggle="dropdown">
+
                                 <span class="d-flex align-items-center">
                                     <img class="rounded-circle header-profile-user"
-                                        src="{{ asset('../images/users/avatar-1.jpg') }}" alt="Header Avatar">
+                                        src="{{ $user->photo ? asset('storage/' . $user->photo) : asset('images/users/default-avatar.png') }}"
+                                        alt="{{ $user->name }}">
+
                                     <span class="text-start ms-xl-2">
-                                        <span class="d-none d-xl-inline-block ms-1 fw-medium user-name-text">Anna
-                                            Adame</span>
-                                        <span class="d-none d-xl-block ms-1 fs-12 user-name-sub-text">Founder</span>
+                                        <span class="d-none d-xl-inline-block ms-1 fw-medium">
+                                            {{ $user->name }}
+                                        </span>
+                                        <span class="d-none d-xl-block ms-1 fs-12 text-muted">
+                                            {{ ucfirst(str_replace('_', ' ', $user->role)) }}
+                                        </span>
                                     </span>
                                 </span>
                             </button>
+
                             <div class="dropdown-menu dropdown-menu-end">
-                                <h6 class="dropdown-header">Welcome Anna!</h6>
-                                <a class="dropdown-item" href=""><i
-                                        class="mdi mdi-account-circle text-muted fs-16 align-middle me-1"></i> <span
-                                        class="align-middle">Profile</span></a>
-                                <a class="dropdown-item" href=""><i
-                                        class="mdi mdi-message-text-outline text-muted fs-16 align-middle me-1"></i>
-                                    <span class="align-middle">Messages</span></a>
+                                <h6 class="dropdown-header">Welcome {{ $user->name }}!</h6>
+
+                                <a class="dropdown-item" href="#">
+                                    <i class="mdi mdi-account-circle me-1"></i> Profile
+                                </a>
+
+                                <a class="dropdown-item" href="#">
+                                    <i class="mdi mdi-message-text-outline me-1"></i> Messages
+                                </a>
+
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href=""><i
-                                        class="mdi mdi-cog-outline text-muted fs-16 align-middle me-1"></i> <span
-                                        class="align-middle">Settings</span></a>
-                                <form method="POST" action="">
+
+                                <a class="dropdown-item" href="#">
+                                    <i class="mdi mdi-cog-outline me-1"></i> Settings
+                                </a>
+
+                                <form method="POST" action="{{ route('logout') }}">
                                     @csrf
-                                    <button type="submit" class="nav-link menu-link btn btn-link ">
-                                        <i class="ri-file-chart-line"></i>
-                                        <span data-key="t-logout">Logout</span>
+                                    <button type="submit" class="dropdown-item text-danger">
+                                        <i class="mdi mdi-logout me-1"></i> Logout
                                     </button>
                                 </form>
                             </div>
                         </div>
+
                     </div>
                 </div>
             </div>
@@ -168,15 +183,20 @@
                                     </li>
 
                                     <li class="nav-item">
-                                        <a href="" class="nav-link" data-key="t-verification-requests">
+                                        <a href="{{ route('admin.verification.index') }}"
+                                            class="nav-link {{ request()->routeIs('vendor-verifications*') ? 'active' : '' }}">
                                             Vendor Verification Requests
                                         </a>
                                     </li>
+
                                     <li class="nav-item">
-                                        <a href="" class="nav-link" data-key="t-blocked-users">
+                                        <a href="{{ route('admin.blocked-users') }}"
+                                            class="nav-link {{ request()->routeIs('admin.blocked-users.index') ? 'active' : '' }}"
+                                            data-key="t-blocked-users">
                                             Blocked Users
                                         </a>
                                     </li>
+
 
                                 </ul>
                             </div>
@@ -377,38 +397,42 @@
                             <div class="collapse menu-dropdown" id="sidebarProfile">
                                 <ul class="nav nav-sm flex-column">
                                     <li class="nav-item">
-                                        <a href="" class="nav-link" data-key="t-notices">
+                                        <a href="{{ route('admin.settings.general') }}"
+                                            class="nav-link {{ request()->routeIs('settings.general') ? 'active' : '' }}">
                                             General Settings
                                         </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a href="" class="nav-link" data-key="t-emergency-contacts">
+                                        <a href="{{ route('admin.settings.app') }}" class="nav-link"
+                                            data-key="t-emergency-contacts">
                                             App Configuration </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a href="" class="nav-link" data-key="t-announcements">
-                                            Panchayath / Locality Setup </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="" class="nav-link" data-key="t-announcements">
+                                        <a href="{{ route('admin.settings.notifications') }}" class="nav-link"
+                                            data-key="t-announcements">
                                             Notification Settings</a>
                                     </li>
                                 </ul>
                             </div>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link menu-link" href="">
-                                <i class="ri-file-chart-line"></i> <span data-key="t-profile">Profile</span></a>
+                        <li class="nav-item {{ request()->routeIs('profile.*') ? 'active' : '' }}">
+                            <a class="nav-link menu-link {{ request()->routeIs('profile.*') ? 'active' : '' }}"
+                                href="{{ route('admin.profile.show') }}">
+                                <i class="ri-file-chart-line"></i>
+                                <span data-key="t-profile">Profile</span>
+                            </a>
                         </li>
+
                         <li class="nav-item">
-                            <form method="POST" action="">
+                            <form method="POST" action="{{ route('logout') }}">
                                 @csrf
-                                <button type="submit" class="nav-link menu-link btn btn-link ">
+                                <button type="submit" class="nav-link menu-link btn btn-link">
                                     <i class="ri-file-chart-line"></i>
                                     <span data-key="t-logout">Logout</span>
                                 </button>
                             </form>
                         </li>
+
 
                     </ul>
                 </div>

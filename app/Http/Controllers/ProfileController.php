@@ -14,6 +14,13 @@ class ProfileController extends Controller
     /**
      * Display the user's profile form.
      */
+
+    public function show()
+    {
+        return view('admin.profile.show', [
+            'user' => Auth::user()
+        ]);
+    }
     public function edit(Request $request): View
     {
         return view('profile.edit', [
@@ -34,7 +41,27 @@ class ProfileController extends Controller
 
         $request->user()->save();
 
-        return Redirect::route('profile.edit')->with('status', 'profile-updated');
+        return Redirect::route('admin.profile.show')->with('status', 'profile-updated');
+    }
+
+    public function changePassword(Request $request)
+    {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        $request->validate([
+            'current_password' => 'required',
+            'password' => 'required|confirmed|min:8',
+        ]);
+
+        if (!\Illuminate\Support\Facades\Hash::check($request->current_password, $user->password)) {
+            return back()->withErrors(['current_password' => 'Current password is incorrect.']);
+        }
+
+        $user->password = $request->password; // auto-hashed
+        $user->save();
+
+        return redirect()->back()->with('success', 'Password changed successfully.');
     }
 
     /**
@@ -56,5 +83,13 @@ class ProfileController extends Controller
         $request->session()->regenerateToken();
 
         return Redirect::to('/');
+    }
+    public function logout(Request $request)
+    {
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect('/login'); // redirect to login page
     }
 }

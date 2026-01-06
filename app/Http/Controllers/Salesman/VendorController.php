@@ -21,11 +21,15 @@ class VendorController extends Controller
      * ======================= */
     public function create()
     {
-        $mainCategories = Category::orderBy('name')->get();
+        $mainCategories = Category::whereNull('parent_id')
+            ->orderBy('name')
+            ->get();
+
         $plans = Plan::orderBy('amount')->get();
 
         return view('sales.add_vendor', compact('mainCategories', 'plans'));
     }
+
 
     /* =======================
      * LOAD CATEGORIES BY MAIN
@@ -41,127 +45,64 @@ class VendorController extends Controller
     /* =======================
      * STORE VENDOR
      * ======================= */
-    public function store(Request $request)
+   public function store(Request $request)
     {
+        $validated = $request->validate([
+            'shop_name' => 'required|string|max:255',
+            'owner_name' => 'nullable|string|max:255',
+            'mobile' => 'required|string|max:20',
+            'whatsapp' => 'nullable|string|max:20',
+            'email' => 'nullable|email',
+            'digipin' => 'nullable|string|max:10',
+            'address' => 'nullable|string',
+            'google_map' => 'nullable|url',
+            'service_area' => 'nullable|string',
 
-        $request->validate([
-            'shop_name'        => 'required|string|max:255',
-            'main_category_id' => 'required|exists:main_categories,id',
-            'category_id'      => 'required|exists:categories,id',
-            'mobile'           => 'required|string|max:20',
-            'plan_id'          => 'required|exists:plans,id',
+            'main_category_id' => 'required|integer',
+            'category_id' => 'required|integer',
+            'plan_id' => 'required|integer',
 
-            'photo'            => 'nullable|image|max:2048',
-            'gallery.*'        => 'nullable|image|max:2048',
+            'opening_time' => 'nullable',
+            'closing_time' => 'nullable',
 
-            'payment_mode'     => 'required|in:gpay,bank_transfer,cash',
-            'transaction_id'   => 'nullable|required_if:payment_mode,gpay,bank_transfer',
+            'payment_mode' => 'required|string',
+            'transaction_id' => 'nullable|string',
+            'reference_number' => 'nullable|string',
+
+            'special_recommendation' => 'nullable|string',
+            'internal_comments' => 'nullable|string',
+
+            'photo' => 'nullable|image|max:2048',
+            'gallery.*' => 'nullable|image|max:2048',
         ]);
 
-        /* PHOTO */
-        $photo = $request->hasFile('photo')
-            ? $request->file('photo')->store('vendors/photos', 'public')
-            : null;
+        /* ================= PHOTO ================= */
+        if ($request->hasFile('photo')) {
+            $validated['photo'] = $request->file('photo')
+                ->store('vendors/profile', 'public');
+        }
 
-        /* GALLERY */
-        $gallery = [];
+        /* ================= GALLERY ================= */
         if ($request->hasFile('gallery')) {
-            foreach ($request->gallery as $img) {
-                $gallery[] = $img->store('vendors/gallery', 'public');
+            $gallery = [];
+            foreach ($request->file('gallery') as $image) {
+                $gallery[] = $image->store('vendors/gallery', 'public');
             }
+            $validated['gallery'] = $gallery;
         }
 
-        /* SOCIAL LINKS */
-        /* SOCIAL LINKS */
-        $socialLinks = [];
-
-        if ($request->has('social_type') && $request->has('social_link')) {
-            foreach ($request->social_type as $index => $type) {
-                $link = $request->social_link[$index] ?? null;
-
-                if (!empty($type) && !empty($link)) {
-                    $socialLinks[] = [
-                        'type' => $type,
-                        'link' => $link,
-                    ];
-                }
-            }
+        /* ================= SOCIAL LINKS ================= */
+        if ($request->has('social_links')) {
+            $validated['social_links'] = $request->social_links;
         }
 
+        /* ================= META ================= */
+        $validated['created_by'] = Auth::id();
+        $validated['status'] = 'pending';
 
-        /* CREATE VENDOR */
-        $vendor = Vendor::create([
-            'provider_id' => Auth::id(),
-            'shop_name'   => $request->shop_name,
-            'owner_name'  => $request->owner_name,
-            'email'       => $request->email,
-            'digipin'     => $request->digipin,
-            'mobile'      => $request->mobile,
-            'whatsapp'    => $request->whatsapp,
-            'address'     => $request->address,
-            'google_map'  => $request->google_map,
-            'service_area' => $request->service_area,
+        Vendor::create($validated);
 
-            'main_category_id' => $request->main_category_id,
-            'category_id'      => $request->category_id,
-            'plan_id'          => $request->plan_id,
-
-            'opening_time' => $request->opening_time,
-            'closing_time' => $request->closing_time,
-            'mode'            => $request->payment_mode,
-            'transaction_id'  => $request->transaction_id,
-            'reference_number' => $request->reference_number,
-
-            'photo'  => $photo,
-            'gallery' => $gallery,
-
-            'social_links' => $socialLinks,
-            'special_recommendation' => $request->special_recommendation,
-            'internal_comments'      => $request->internal_comments,
-
-            'verification_status' => 'pending',
-            'is_active' => false,
-        ]);
-
-        /* PAYMENT */
-        Payment::create([
-            'vendor_id'       => $vendor->id,
-            'mode'            => $request->payment_mode,
-            'transaction_id'  => $request->transaction_id,
-            'reference_number' => $request->reference_number,
-            'status'          => in_array($request->payment_mode, ['gpay', 'bank_transfer'])
-                ? 'completed'
-                : 'pending',
-
-
-        ]);
-
-        return redirect()
-            ->route('sales.add-vendor')
-            ->with('success', 'Vendor added successfully. Waiting for admin approval.');
-    }
-
-
-    /* =======================
-     * LIST VENDORS
-     * ======================= */
-    public function index(Request $request)
-    {
-        $vendors = Vendor::where('provider_id', Auth::id())
-            ->when(
-                $request->shop_name,
-                fn($q) =>
-                $q->where('shop_name', 'like', "%{$request->shop_name}%")
-            )
-            ->when(
-                $request->plan_id,
-                fn($q) =>
-                $q->where('plan_id', $request->plan_id)
-            )
-            ->latest()
-            ->paginate(10);
-
-        return view('sales.vendor_list', compact('vendors'));
+        return back()->with('success', 'Vendor submitted for admin approval');
     }
 
     /* =======================

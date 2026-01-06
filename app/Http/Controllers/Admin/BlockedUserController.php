@@ -4,28 +4,47 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\Vendor;
 use Illuminate\Http\Request;
 
 class BlockedUserController extends Controller
 {
     public function index()
     {
-        $users = User::where('is_blocked', true)
+        // Get all vendors with status rejected
+        $blockedVendors = Vendor::where('status', 'rejected')
             ->latest()
-            ->paginate(20);
+            ->paginate(10);
 
-        return view('admin.blocked.index', compact('users'));
+        return view('admin.verifications.blockedusers', compact('blockedVendors'));
     }
 
     /**
      * Unblock user
      */
-    public function unblock($id)
+    public function approve($id)
     {
-        User::findOrFail($id)->update([
-            'is_blocked' => false
-        ]);
+        $vendor = Vendor::findOrFail($id);
 
-        return back()->with('success', 'User unblocked');
+        if ($vendor->status !== 'rejected') {
+            return redirect()->back()->with('error', 'Vendor is not blocked.');
+        }
+
+        $vendor->status = 'pending';
+        $vendor->save();
+
+        return redirect()->back()->with('success', 'Vendor status set back to pending.');
+    }
+
+    public function show($id)
+    {
+        $vendor = Vendor::with([
+            'mainCategory',
+            'category',
+            'plan',
+            'creator'
+        ])->findOrFail($id);
+
+        return view('admin.blocked-users.show', compact('vendor'));
     }
 }
