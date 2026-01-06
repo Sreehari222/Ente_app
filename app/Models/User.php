@@ -68,4 +68,7 @@ class User extends Authenticatable
     {
         return $this->belongsTo(User::class, 'deo_id');
     }
+
+
 }
+

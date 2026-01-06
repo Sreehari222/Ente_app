@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\AreaOperatorController;
 use App\Http\Controllers\Admin\BlockedUserController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\LoginController;
 use App\Http\Controllers\PlanController;
 use App\Http\Controllers\SubCategoryController;
 use Illuminate\Support\Facades\Route;
@@ -13,14 +14,26 @@ use App\Http\Controllers\Admin\VerificationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RegisterController\UserRegisterController;
 use App\Http\Controllers\Salesman\VendorController;
+
 use App\Http\Controllers\SettingsController;
 use App\Models\Category;
+
+use App\Http\Controllers\Admin\AdvertisementController;
+use App\Http\Controllers\Admin\OfferController;
+use App\Http\Controllers\Admin\RewardController;
+use App\Http\Controllers\Deo\SalesmanlistController;
+
+
 
 /*
 |--------------------------------------------------------------------------
 | Web Routes
 |--------------------------------------------------------------------------
 */
+
+Route::middleware('auth')->group(function () {
+    Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+});
 
 Route::get('/', function () {
     return view('welcome');
@@ -88,6 +101,28 @@ Route::middleware(['auth', 'role:admin'])
         Route::put('/plans/{plan}', [PlanController::class, 'update'])->name('plans.update');
         Route::delete('/plans/{plan}', [PlanController::class, 'destroy'])->name('plans.destroy');
 
+        //advertinements
+        Route::get('/ads', [AdvertisementController::class, 'allAds'])->name('all-ads');
+        // Route::get('/advertisements/create', [AdvertisementController::class, 'create'])->name('create-ads');
+        Route::get('/ads/create', [AdvertisementController::class, 'create'])->name('create-ads');
+        Route::post('/ads/store', [AdvertisementController::class, 'store'])->name('ads.store');
+        Route::get('/admin/ads/{id}/edit', [AdvertisementController::class, 'edit'])->name('admin.ads.edit');
+        Route::delete('/admin/ads/{id}', [AdvertisementController::class, 'destroy'])->name('admin.ads.destroy');
+        Route::put('/admin/ads/{id}', [AdvertisementController::class, 'update'])->name('admin.ads.update');
+
+        // Offers
+        Route::get('/offers', [OfferController::class, 'alloffer'])->name('all-offers');
+        Route::get('/offers/create', [OfferController::class, 'create'])->name('create-offer');
+        Route::post('/offers/store', [OfferController::class, 'store'])->name('offers.store');
+        Route::delete('/offers/{offer}', [OfferController::class, 'destroy'])->name('offers.destroy');
+        Route::get('/offers/scheduled', [OfferController::class, 'scheduledOffers'])->name('scheduled-offers');
+
+        //reward management
+        Route::get('/daily-challenges', [RewardController::class, 'dailyChallenges'])->name('daily-challenges');
+        Route::get('/daily-challenges/create', [RewardController::class, 'createDailyChallenge'])->name('daily_challenges.create');
+        Route::post('/daily-challenges/store', [RewardController::class, 'storeDailyChallenge'])->name('daily_challenge.store');
+        Route::delete('/daily-challenges/{id}', [RewardController::class, 'deleteDailyChallenge'])->name('daily_challenges.delete');
+
         /*
         |--------------------------------------------------------------------------
         | VERIFICATION & BLOCKING
@@ -112,10 +147,15 @@ Route::middleware(['auth', 'role:admin'])
         Route::post('/save', [SettingsController::class, 'store'])->name('store');
         // Profile
         Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
-        Route::put('/profile/update', [ProfileController::class,'update'])->name('profile.update');
-         Route::post('/profile/change-password', [ProfileController::class,'changePassword'])->name('profile.change-password');
+        Route::put('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
+        Route::post('/profile/change-password', [ProfileController::class, 'changePassword'])->name('profile.change-password');
         // Logout
         Route::post('/logout', action: [ProfileController::class, 'logout'])->name('logout');
+
+        Route::post('/vendor-verifications/{id}/approve', [VerificationController::class, 'approve'])->name('vendor-verifications.approve');
+        Route::delete('/vendor-verifications/{id}/reject', [VerificationController::class, 'reject'])->name('vendor-verifications.reject');
+        Route::get('/blocked-users', [BlockedUserController::class, 'index'])->name('blocked-users');
+        Route::patch('/blocked-users/{id}/unblock', [BlockedUserController::class, 'unblock'])->name('blocked-users.unblock');
     });
 
 /*
@@ -138,8 +178,23 @@ Route::middleware(['auth', 'role:area_operator'])
 Route::middleware(['auth', 'role:deo'])
     ->prefix('deo')
     ->group(function () {
-        Route::get('/dashboard', [App\Http\Controllers\Deo\DashboardController::class, 'index'])
-            ->name('deo.dashboard');
+        Route::get('/dashboard', [App\Http\Controllers\Deo\DashboardController::class, 'index'])->name('deo.dashboard');
+        Route::get('/salesmen', [SalesmanlistController::class, 'index'])->name('salesmen.index');
+        Route::get('/deo/salesmen/{salesman}', [SalesmanlistController::class, 'show'])->name('salesmen.show');
+        Route::get('/salesmen/{salesman}/edit', [SalesmanlistController::class, 'edit'])->name('salesmen.edit');
+        Route::delete('/salesmen/{salesman}', [SalesmanlistController::class, 'destroy'])->name('salesmen.destroy');
+        Route::get('/salesmen/performance', [SalesmanController::class, 'performance'])->name('deo.salesmen.performance');
+
+        Route::get('/vendors', [VendorController::class, 'index'])->name('vendors.index');
+        Route::get('/vendors/pending', [VendorController::class, 'pending'])->name('vendors.pending');
+
+        // Route::get('/reports/daily', [DeoReportController::class, 'daily'])->name('reports.daily');
+        // Route::get('/reports/monthly', [DeoReportController::class, 'monthly'])->name('reports.monthly');
+
+        // Route::get('/messages', [DeoMessageController::class, 'index'])->name('messages');
+        // Route::get('/notifications', [DeoNotificationController::class, 'index'])->name('notifications');
+
+        // Route::get('/profile', [DeoProfileController::class, 'show'])->name('profile');
     });
 
 /*
