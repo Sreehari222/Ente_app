@@ -1,4 +1,3 @@
-{{-- resources/views/admin/dashboard.blade.php --}}
 @extends('layouts.admin')
 
 @section('content')
@@ -30,9 +29,10 @@
                     <div class="d-flex align-items-end justify-content-between mt-4">
                         <div>
                             <h4 class="fs-22 fw-semibold ff-secondary mb-4">
-                                <span class="counter-value" data-target="12,456">0</span>
+                                {{ $totalUsers }}
                             </h4>
-                            <a href="" class="text-decoration-underline">View All Users</a>
+
+                            <a href="{{ route('admin.users') }}" class="text-decoration-underline">View All Users</a>
                         </div>
                         <div class="avatar-sm flex-shrink-0">
                             <span class="avatar-title bg-primary-subtle rounded fs-3">
@@ -49,13 +49,13 @@
                 <div class="card-body">
                     <div class="d-flex align-items-center">
                         <div class="flex-grow-1 overflow-hidden">
-                            <p class="text-uppercase fw-medium text-muted text-truncate mb-0">Service Providers</p>
+                            <p class="text-uppercase fw-medium text-muted text-truncate mb-0">Area Operators</p>
                         </div>
                     </div>
                     <div class="d-flex align-items-end justify-content-between mt-4">
                         <div>
                             <h4 class="fs-22 fw-semibold ff-secondary mb-4">
-                                <span class="counter-value" data-target="2,345">0</span>
+                                {{ $areaOperators }}
                             </h4>
                             <span class="badge bg-success-subtle text-success mb-0">
                                 <i class="ri-arrow-up-line align-middle"></i> 15.3%
@@ -76,15 +76,16 @@
                 <div class="card-body">
                     <div class="d-flex align-items-center">
                         <div class="flex-grow-1 overflow-hidden">
-                            <p class="text-uppercase fw-medium text-muted text-truncate mb-0">Shop Owners</p>
+                            <p class="text-uppercase fw-medium text-muted text-truncate mb-0">D E O</p>
                         </div>
                     </div>
                     <div class="d-flex align-items-end justify-content-between mt-4">
                         <div>
                             <h4 class="fs-22 fw-semibold ff-secondary mb-4">
-                                <span class="counter-value" data-target="1,890">0</span>
+                                {{ $deo }}
                             </h4>
-                            <a href="" class="text-decoration-underline">View All Shops</a>
+
+                            <a href="{{ route('admin.shop-owners') }}" class="text-decoration-underline">View All Shops</a>
                         </div>
                         <div class="avatar-sm flex-shrink-0">
                             <span class="avatar-title bg-info-subtle rounded fs-3">
@@ -101,13 +102,13 @@
                 <div class="card-body">
                     <div class="d-flex align-items-center">
                         <div class="flex-grow-1 overflow-hidden">
-                            <p class="text-uppercase fw-medium text-muted text-truncate mb-0">Total Listings</p>
+                            <p class="text-uppercase fw-medium text-muted text-truncate mb-0">Sales Man's</p>
                         </div>
                     </div>
                     <div class="d-flex align-items-end justify-content-between mt-4">
                         <div>
                             <h4 class="fs-22 fw-semibold ff-secondary mb-4">
-                                <span class="counter-value" data-target="5,678">0</span>
+                                {{ $salesman }}
                             </h4>
                             <span class="badge bg-success-subtle text-success mb-0">
                                 <i class="ri-arrow-up-line align-middle"></i> 12.5% Growth
@@ -137,9 +138,10 @@
                     <div class="d-flex align-items-end justify-content-between mt-4">
                         <div>
                             <h4 class="fs-22 fw-semibold ff-secondary mb-4">
-                                <span class="counter-value" data-target="87">0</span>
+                                {{ $pendingApprovals }}
                             </h4>
-                            <a href="" class="text-decoration-underline text-warning">Review Now</a>
+                            <a href="{{ route('admin.verification.index') }}"
+                                class="text-decoration-underline text-warning">Review Now</a>
                         </div>
                         <div class="avatar-sm flex-shrink-0">
                             <span class="avatar-title bg-warning-subtle rounded fs-3">
@@ -162,9 +164,9 @@
                     <div class="d-flex align-items-end justify-content-between mt-4">
                         <div>
                             <h4 class="fs-22 fw-semibold ff-secondary mb-4">
-                                <span class="counter-value" data-target="156">0</span>
+                                {{ $activeAds }}
                             </h4>
-                            <a href="" class="text-decoration-underline">View Ads</a>
+                            <a href="{{ route('admin.all-ads') }}" class="text-decoration-underline">View Ads</a>
                         </div>
                         <div class="avatar-sm flex-shrink-0">
                             <span class="avatar-title bg-danger-subtle rounded fs-3">
@@ -187,9 +189,9 @@
                     <div class="d-flex align-items-end justify-content-between mt-4">
                         <div>
                             <h4 class="fs-22 fw-semibold ff-secondary mb-4">
-                                <span class="counter-value" data-target="342">0</span>
+                                {{ $activeOffers }}
                             </h4>
-                            <a href="" class="text-decoration-underline">Manage Offers</a>
+                            <a href="{{ route('admin.all-offers') }}" class="text-decoration-underline">Manage Offers</a>
                         </div>
                         <div class="avatar-sm flex-shrink-0">
                             <span class="avatar-title bg-primary-subtle rounded fs-3">
@@ -254,73 +256,69 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <div class="flex-shrink-0 me-2">
-                                                <img src="{{ asset('assets/images/users/avatar-1.jpg') }}" alt="" class="avatar-xs rounded-circle" />
+                                @forelse($recentVendors as $vendor)
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div class="flex-shrink-0 me-2">
+                                                    <img src="{{ $vendor->photo ? asset('storage/' . $vendor->photo) : asset('assets/images/users/avatar-1.jpg') }}"
+                                                        class="avatar-xs rounded-circle" />
+                                                </div>
+                                                <div class="flex-grow-1">
+                                                    {{ $vendor->shop_name }}
+                                                </div>
                                             </div>
-                                            <div class="flex-grow-1">Tech Solutions Ltd</div>
-                                        </div>
-                                    </td>
-                                    <td>Electronics</td>
-                                    <td>19 Nov, 2025</td>
-                                    <td><span class="badge bg-warning-subtle text-warning">Pending</span></td>
-                                    <td>
-                                        <button class="btn btn-sm btn-success">Approve</button>
-                                        <button class="btn btn-sm btn-danger">Reject</button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <div class="flex-shrink-0 me-2">
-                                                <img src="{{ asset('assets/images/users/avatar-2.jpg') }}" alt="" class="avatar-xs rounded-circle" />
-                                            </div>
-                                            <div class="flex-grow-1">Fashion Hub</div>
-                                        </div>
-                                    </td>
-                                    <td>Clothing</td>
-                                    <td>18 Nov, 2025</td>
-                                    <td><span class="badge bg-success-subtle text-success">Approved</span></td>
-                                    <td>
-                                        <button class="btn btn-sm btn-info">View</button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <div class="flex-shrink-0 me-2">
-                                                <img src="{{ asset('assets/images/users/avatar-3.jpg') }}" alt="" class="avatar-xs rounded-circle" />
-                                            </div>
-                                            <div class="flex-grow-1">Home Decor Plus</div>
-                                        </div>
-                                    </td>
-                                    <td>Home & Garden</td>
-                                    <td>17 Nov, 2025</td>
-                                    <td><span class="badge bg-warning-subtle text-warning">Pending</span></td>
-                                    <td>
-                                        <button class="btn btn-sm btn-success">Approve</button>
-                                        <button class="btn btn-sm btn-danger">Reject</button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <div class="flex-shrink-0 me-2">
-                                                <img src="{{ asset('assets/images/users/avatar-4.jpg') }}" alt="" class="avatar-xs rounded-circle" />
-                                            </div>
-                                            <div class="flex-grow-1">Sports Arena</div>
-                                        </div>
-                                    </td>
-                                    <td>Sports & Fitness</td>
-                                    <td>16 Nov, 2025</td>
-                                    <td><span class="badge bg-success-subtle text-success">Approved</span></td>
-                                    <td>
-                                        <button class="btn btn-sm btn-info">View</button>
-                                    </td>
-                                </tr>
+                                        </td>
+
+                                        <td>
+                                            {{ $vendor->mainCategory->name ?? 'N/A' }}
+                                        </td>
+
+                                        <td>
+                                            {{ $vendor->created_at->format('d M, Y') }}
+                                        </td>
+
+                                        <td>
+                                            @if ($vendor->status === 'pending')
+                                                <span class="badge bg-warning-subtle text-warning">Pending</span>
+                                            @elseif($vendor->status === 'approved')
+                                                <span class="badge bg-success-subtle text-success">Approved</span>
+                                            @else
+                                                <span class="badge bg-danger-subtle text-danger">Rejected</span>
+                                            @endif
+                                        </td>
+
+                                        <td>
+                                            @if ($vendor->status === 'pending')
+                                                <form method="POST"
+                                                    action="{{ route('admin.verification.approve', $vendor->id) }}"
+                                                    class="d-inline">
+                                                    @csrf
+                                                    <button class="btn btn-sm btn-success">Approve</button>
+                                                </form>
+
+                                                <form method="POST"
+                                                    action="{{ route('admin.verification.reject', $vendor->id) }}"
+                                                    class="d-inline">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button class="btn btn-sm btn-danger">Reject</button>
+                                                </form>
+                                            @else
+                                                <a href="{{ route('admin.vendors.show', $vendor->id) }}"
+                                                    class="btn btn-sm btn-info">View</a>
+                                            @endif
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="5" class="text-center text-muted">
+                                            No vendor applications found
+                                        </td>
+                                    </tr>
+                                @endforelse
                             </tbody>
+
                         </table>
                     </div>
                 </div>

@@ -38,13 +38,15 @@ class Vendor extends Model
     protected $casts = [
         'social_links' => 'array',
         'gallery' => 'array',
+        'approved_at' => 'datetime',
     ];
+
 
     public function creator()
     {
         return $this->belongsTo(User::class, 'created_by');
     }
-     // Main Category relationship
+    // Main Category relationship
     public function mainCategory()
     {
         return $this->belongsTo(Category::class, 'main_category_id');
@@ -59,6 +61,6 @@ class Vendor extends Model
     // Plan relationship
     public function plan()
     {
-        return $this->belongsTo(Plan::class, 'plan_id');
+        return $this->belongsTo(Plan::class, 'plan_id', 'id');
     }
 }

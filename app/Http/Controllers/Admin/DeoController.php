@@ -12,10 +12,10 @@ class DeoController extends Controller
     public function index()
     {
         $deos = User::where('role', 'deo')
-            ->with('areaOperator')
             ->withCount('salesmen')
+            ->with('areaOperator')   
             ->latest()
-            ->get();
+            ->paginate(20);
 
         return view('admin.deos.index', compact('deos'));
     }

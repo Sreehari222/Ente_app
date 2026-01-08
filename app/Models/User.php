@@ -24,6 +24,7 @@ class User extends Authenticatable
         'role',
         'area_operator_id',
         'deo_id',
+        'email_verified_at',
     ];
 
 

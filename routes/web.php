@@ -36,7 +36,7 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('auth.login');
 });
 Route::get('register/area-operator', [UserRegisterController::class, 'createAreaOperator'])->name('admin.area-operators.create');
 Route::post('register/area-operator', [UserRegisterController::class, 'storeAreaOperator'])->name('admin.area-operators.store');
@@ -68,6 +68,11 @@ Route::middleware(['auth', 'role:admin'])
         // ================= DASHBOARD & USERS =================
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
         Route::get('/users', [UserController::class, 'index'])->name('users');
+        Route::get('/users/{user}', [UserController::class, 'show'])->name('users.show');
+        Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
+        Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
+        Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
+        Route::get('/shop-owners', [DashboardController::class, 'shopUsers'])->name('shop-owners');
 
         // ================= AREA OPERATORS =================
         Route::get('/area-operators', [AreaOperatorController::class, 'index'])->name('area-operators');
@@ -79,6 +84,7 @@ Route::middleware(['auth', 'role:admin'])
         Route::get('/deos', [DeoController::class, 'index'])->name('deos');
         Route::get('/deos/{deo}', [DeoController::class, 'show'])->name('deos.show');
         Route::get('/deos/{deo}/edit', [DeoController::class, 'edit'])->name('deos.edit');
+        Route::put('/admin/deos/{id}', [DeoController::class, 'update'])->name('deos.update');
         Route::delete('/deos/{deo}', [DeoController::class, 'destroy'])->name('deos.destroy');
 
         // ================= SALESMEN =================
@@ -151,7 +157,7 @@ Route::middleware(['auth', 'role:admin'])
         Route::post('/profile/change-password', [ProfileController::class, 'changePassword'])->name('profile.change-password');
         // Logout
         Route::post('/logout', action: [ProfileController::class, 'logout'])->name('logout');
-
+        Route::get('/vendors/{vendor}', [VendorController::class, 'view'])->name('vendors.show');
         Route::post('/vendor-verifications/{id}/approve', [VerificationController::class, 'approve'])->name('vendor-verifications.approve');
         Route::delete('/vendor-verifications/{id}/reject', [VerificationController::class, 'reject'])->name('vendor-verifications.reject');
         Route::get('/blocked-users', [BlockedUserController::class, 'index'])->name('blocked-users');
@@ -211,6 +217,9 @@ Route::middleware(['auth', 'role:salesman'])
         Route::get('/add-vendor', [VendorController::class, 'create'])->name('add-vendor');
         Route::get('/vendor-list', [VendorController::class, 'index'])->name('vendor-list');
         Route::post('sales/vendors/store', [VendorController::class, 'store'])->name('vendors.store');
+        Route::get('/vendors/{id}/edit', [VendorController::class, 'edit'])->name('vendors.edit');
+        Route::put('/salesman/vendors/{vendor}', [VendorController::class, 'update'])->name('vendors.update');
+        Route::get('/vendors/{vendor}/toggle', [VendorController::class, 'toggleStatus'])->name('vendors.toggle');
     });
 
 

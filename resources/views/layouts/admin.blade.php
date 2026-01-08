@@ -81,7 +81,7 @@
 
                                 <span class="d-flex align-items-center">
                                     <img class="rounded-circle header-profile-user"
-                                        src="{{ $user->photo ? asset('storage/' . $user->photo) : asset('images/users/default-avatar.png') }}"
+                                        src="{{ $user->photo ? asset('storage/' . $user->photo) : asset('images/users/avatar-1.jpg') }}"
                                         alt="{{ $user->name }}">
 
                                     <span class="text-start ms-xl-2">

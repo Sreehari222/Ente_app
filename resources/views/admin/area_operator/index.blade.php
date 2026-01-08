@@ -12,6 +12,10 @@
                         <li class="breadcrumb-item active">All Users</li>
                     </ol>
                 </div>
+                <a href="{{ route('admin.area-operators.create') }}" class="btn btn-success btn-sm">
+                    <i class="ri-user-add-line me-1"></i>
+                    Register Area Operator
+                </a>
             </div>
         </div>
     </div>
@@ -21,8 +25,9 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-header">
-                    <h5 class="card-title mb-0">See Every User Registered in the App</h5>
+                    <h5 class="card-title mb-0">See Every Area Operator Registered in the App</h5>
                 </div>
+
                 <div class="card-body">
                     <div class="table-responsive">
                         <table class="table table-hover mb-0 align-middle">
