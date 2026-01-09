@@ -22,8 +22,7 @@ use App\Http\Controllers\Admin\AdvertisementController;
 use App\Http\Controllers\Admin\OfferController;
 use App\Http\Controllers\Admin\RewardController;
 use App\Http\Controllers\Deo\SalesmanlistController;
-
-
+use App\Http\Controllers\RecommendationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -211,6 +210,12 @@ Route::middleware(['auth', 'role:salesman'])
         Route::get('/add-vendor', [VendorController::class, 'create'])->name('add-vendor');
         Route::get('/vendor-list', [VendorController::class, 'index'])->name('vendor-list');
         Route::post('sales/vendors/store', [VendorController::class, 'store'])->name('vendors.store');
+
+        Route::get('sales/vendors/{vendor}/edit', [VendorController::class, 'edit'])->name('vendors.edit');
+        Route::patch('vendors/{vendor}/toggle', [VendorController::class, 'toggleStatus'])->name('vendors.toggle');
+        Route::get('/recommendations', [RecommendationController::class, 'index'])->name('recommendations');
+        Route::post('/recommendations', [RecommendationController::class, 'store'])->name('recommendations.store');
+
     });
 
 
