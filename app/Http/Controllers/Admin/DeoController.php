@@ -13,7 +13,7 @@ class DeoController extends Controller
     {
         $deos = User::where('role', 'deo')
             ->withCount('salesmen')
-            ->with('areaOperator')   
+            ->with('areaOperator')
             ->latest()
             ->paginate(20);
 
@@ -93,7 +93,7 @@ class DeoController extends Controller
         $deo->delete();
 
         return redirect()
-            ->route('admin.deos.index')
+            ->route('admin.deos')
             ->with('success', 'DEO deleted successfully');
     }
 }

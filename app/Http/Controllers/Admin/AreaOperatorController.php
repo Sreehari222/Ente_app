@@ -87,7 +87,7 @@ class AreaOperatorController extends Controller
         $operator->delete();
 
         return redirect()
-            ->route('admin.area-operators.index')
+            ->route('admin.area-operators')
             ->with('success', 'Area Operator removed successfully.');
     }
 }

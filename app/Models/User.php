@@ -25,6 +25,9 @@ class User extends Authenticatable
         'area_operator_id',
         'deo_id',
         'email_verified_at',
+        'profile_photo',
+        'cover_photo',
+        
     ];
 
 

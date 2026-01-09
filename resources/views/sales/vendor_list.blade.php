@@ -103,8 +103,8 @@
                                         $verificationClass = match ($vendor->status) {
                                             'approved' => 'bg-success',
                                             'pending' => 'bg-warning',
-                                            'rejected' =>'bg-danger',
-                                            default => 'bg-secondary'
+                                            'rejected' => 'bg-danger',
+                                            default => 'bg-secondary',
                                         };
                                     @endphp
                                     <span class="badge {{ $verificationClass }}">
@@ -119,14 +119,17 @@
                                         Edit
                                     </a>
 
-                                    <form action="{{ route('salesman.vendors.toggle', $vendor->id) }}" method="POST"
-                                        class="d-inline">
+                                    <form action="{{ route('salesman.vendors.destroy', $vendor->id) }}" method="POST"
+                                        class="d-inline"
+                                        onsubmit="return confirm('Are you sure you want to delete this vendor?');">
                                         @csrf
-                                        @method('PATCH')
-                                        <button class="btn btn-sm btn-warning">
-                                            {{ $vendor->is_active ? 'Disable' : 'Enable' }}
+                                        @method('DELETE')
+
+                                        <button class="btn btn-sm btn-danger">
+                                            Delete
                                         </button>
                                     </form>
+
                                 </td>
                             </tr>
                         @empty

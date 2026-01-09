@@ -244,9 +244,17 @@ class VendorController extends Controller
         $vendor->load(['mainCategory', 'category', 'plan', 'creator']);
         return view('admin.vendors.show', compact('vendor'));
     }
+
     public function index()
     {
         $vendors = Vendor::where('created_by', auth()->id())->latest()->paginate(10);
         return view('sales.vendor_list', compact('vendors'));
+    }
+
+    public function destroy($id)
+    {
+        Vendor::findOrFail($id)->delete();
+
+        return back()->with('success', 'Vendor deleted successfully');
     }
 }

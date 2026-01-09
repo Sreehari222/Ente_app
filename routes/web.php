@@ -219,7 +219,8 @@ Route::middleware(['auth', 'role:salesman'])
         Route::post('sales/vendors/store', [VendorController::class, 'store'])->name('vendors.store');
         Route::get('/vendors/{id}/edit', [VendorController::class, 'edit'])->name('vendors.edit');
         Route::put('/salesman/vendors/{vendor}', [VendorController::class, 'update'])->name('vendors.update');
-        Route::get('/vendors/{vendor}/toggle', [VendorController::class, 'toggleStatus'])->name('vendors.toggle');
+        Route::delete('salesman/vendors/{id}', [VendorController::class, 'destroy'])->name('salesman.vendors.destroy');
+
     });
 
 
