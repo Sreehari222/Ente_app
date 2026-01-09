@@ -102,9 +102,19 @@
                                     <i class="mdi mdi-account-circle me-1"></i> Profile
                                 </a>
 
-                                <a class="dropdown-item" href="#">
-                                    <i class="mdi mdi-message-text-outline me-1"></i> Messages
+                                <a class="dropdown-item d-flex justify-content-between align-items-center"
+                                    href="{{ route('messages.index') }}">
+                                    <span>
+                                        <i class="mdi mdi-message-text-outline me-1"></i> Messages
+                                    </span>
+
+                                    @if (auth()->user()->unreadNotifications->count())
+                                        <span class="badge bg-danger rounded-pill">
+                                            {{ auth()->user()->unreadNotifications->count() }}
+                                        </span>
+                                    @endif
                                 </a>
+
 
                                 <div class="dropdown-divider"></div>
 
@@ -258,12 +268,14 @@
                             <div class="collapse menu-dropdown" id="sidebarAdvertisement">
                                 <ul class="nav nav-sm flex-column">
                                     <li class="nav-item">
-                                        <a href="{{ route('admin.all-ads') }}" class="nav-link" data-key="t-all-ads">
+                                        <a href="{{ route('admin.all-ads') }}" class="nav-link"
+                                            data-key="t-all-ads">
                                             All Advertisements
                                         </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a href="{{ route('admin.create-ads') }}" class="nav-link" data-key="t-create-ad">
+                                        <a href="{{ route('admin.create-ads') }}" class="nav-link"
+                                            data-key="t-create-ad">
                                             Create New Ad </a>
                                     </li>
                                     <li class="nav-item">
@@ -286,12 +298,14 @@
                             <div class="collapse menu-dropdown" id="sidebarOffer">
                                 <ul class="nav nav-sm flex-column">
                                     <li class="nav-item">
-                                        <a href="{{ route('admin.all-offers') }}" class="nav-link" data-key="t-all-offers">
+                                        <a href="{{ route('admin.all-offers') }}" class="nav-link"
+                                            data-key="t-all-offers">
                                             All Offers
                                         </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a href="{{ route('admin.create-offer') }}" class="nav-link" data-key="t-create-offer">
+                                        <a href="{{ route('admin.create-offer') }}" class="nav-link"
+                                            data-key="t-create-offer">
                                             Create Offer </a>
                                     </li>
                                     <!-- <li class="nav-item">
@@ -311,7 +325,8 @@
                             <div class="collapse menu-dropdown" id="sidebarReward">
                                 <ul class="nav nav-sm flex-column">
                                     <li class="nav-item">
-                                        <a href="{{ route('admin.daily-challenges') }}" class="nav-link" data-key="t-challenges">
+                                        <a href="{{ route('admin.daily-challenges') }}" class="nav-link"
+                                            data-key="t-challenges">
                                             Daily Challenges
                                         </a>
                                     </li>
@@ -385,6 +400,13 @@
                             <a class="nav-link menu-link" href="{">
                                 <i class="ri-file-chart-line"></i> <span data-key="t-report">Reports</span></a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link menu-link" href="{{ route('admin.messages.index') }}">
+                                <i class="ri-message-3-line"></i>
+                                <span data-key="t-messages">Messages</span>
+                            </a>
+                        </li>
+
 
                         <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-pages">Profile &
                                 Settings</span></li>

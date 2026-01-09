@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminMessageController;
 use App\Http\Controllers\Admin\AreaOperatorController;
 use App\Http\Controllers\Admin\BlockedUserController;
 use App\Http\Controllers\Admin\UserController;
@@ -23,6 +24,7 @@ use App\Http\Controllers\Admin\OfferController;
 use App\Http\Controllers\Admin\RewardController;
 use App\Http\Controllers\Deo\SalesmanlistController;
 use App\Http\Controllers\RecommendationController;
+use App\Http\Controllers\Salesman\salesmanMessageController;
 
 /*
 |--------------------------------------------------------------------------
@@ -128,7 +130,11 @@ Route::middleware(['auth', 'role:admin'])
         Route::post('/daily-challenges/store', [RewardController::class, 'storeDailyChallenge'])->name('daily_challenge.store');
         Route::delete('/daily-challenges/{id}', [RewardController::class, 'deleteDailyChallenge'])->name('daily_challenges.delete');
 
-        /*
+
+        Route::get('messages', [AdminMessageController::class, 'index'])->name('messages.index');
+        Route::get('messages/create', [AdminMessageController::class, 'create'])->name('messages.create');
+        Route::post('messages', [AdminMessageController::class, 'store'])->name('messages.store');
+        Route::post('/messages/{id}/reply', [AdminMessageController::class, 'reply'])->name('messages.reply');        /*
         |--------------------------------------------------------------------------
         | VERIFICATION & BLOCKING
         |--------------------------------------------------------------------------
@@ -218,15 +224,19 @@ Route::middleware(['auth', 'role:salesman'])
         Route::post('sales/vendors/store', [VendorController::class, 'store'])->name('vendors.store');
         Route::get('/vendors/{id}/edit', [VendorController::class, 'edit'])->name('vendors.edit');
         Route::put('/salesman/vendors/{vendor}', [VendorController::class, 'update'])->name('vendors.update');
-        Route::delete('salesman/vendors/{id}', [VendorController::class, 'destroy'])->name('salesman.vendors.destroy');
+        Route::delete('salesman/vendors/{id}', [VendorController::class, 'destroy'])->name('vendors.destroy');
+
+        Route::get('/messages', [SalesmanMessageController::class, 'index'])->name('messages.index');
+        Route::get('/messages/create', [SalesmanMessageController::class, 'create'])->name('messages.create'); // ✅ this
+        Route::get('/messages/{id}', [SalesmanMessageController::class, 'show'])->name('messages.show');
+        Route::post('/messages', [SalesmanMessageController::class, 'store'])->name('messages.store');
+        Route::post('/messages/{id}/reply', [SalesmanMessageController::class, 'reply'])->name('messages.reply');
 
 
         Route::get('sales/vendors/{vendor}/edit', [VendorController::class, 'edit'])->name('vendors.edit');
         Route::patch('vendors/{vendor}/toggle', [VendorController::class, 'toggleStatus'])->name('vendors.toggle');
         Route::get('/recommendations', [RecommendationController::class, 'index'])->name('recommendations');
         Route::post('/recommendations', [RecommendationController::class, 'store'])->name('recommendations.store');
-
-
     });
 
 
@@ -245,14 +255,15 @@ Route::middleware(['auth', 'role:user'])
 
 Route::middleware('auth')->group(function () {
 
-    Route::get('/messages', function () {
-        return view('messages.index');
-    })->name('messages.index');
+    Route::get('/messages', [\App\Http\Controllers\UserMessageController::class, 'index'])
+        ->name('messages.index');
 
     Route::get('/settings', function () {
         return view('settings.index');
     })->name('settings');
 });
+
+
 
 
 /*
