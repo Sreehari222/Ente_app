@@ -22,8 +22,7 @@ use App\Http\Controllers\Admin\AdvertisementController;
 use App\Http\Controllers\Admin\OfferController;
 use App\Http\Controllers\Admin\RewardController;
 use App\Http\Controllers\Deo\SalesmanlistController;
-
-
+use App\Http\Controllers\RecommendationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -220,6 +219,13 @@ Route::middleware(['auth', 'role:salesman'])
         Route::get('/vendors/{id}/edit', [VendorController::class, 'edit'])->name('vendors.edit');
         Route::put('/salesman/vendors/{vendor}', [VendorController::class, 'update'])->name('vendors.update');
         Route::delete('salesman/vendors/{id}', [VendorController::class, 'destroy'])->name('salesman.vendors.destroy');
+
+
+        Route::get('sales/vendors/{vendor}/edit', [VendorController::class, 'edit'])->name('vendors.edit');
+        Route::patch('vendors/{vendor}/toggle', [VendorController::class, 'toggleStatus'])->name('vendors.toggle');
+        Route::get('/recommendations', [RecommendationController::class, 'index'])->name('recommendations');
+        Route::post('/recommendations', [RecommendationController::class, 'store'])->name('recommendations.store');
+
 
     });
 
