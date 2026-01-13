@@ -46,11 +46,15 @@ class AreaOperatorController extends Controller
      * Show the edit form
      */
     public function edit($id)
-    {
-        $operator = User::where('role', 'area_operator')->findOrFail($id);
+{
+    $user = User::where('role', 'area_operator')->findOrFail($id);
 
-        return view('admin.area-operators.edit', compact('operator'));
-    }
+    $areaOperators = User::where('role', 'area_operator')->get();
+    $deos = User::where('role', 'deo')->get();
+
+    return view('admin.area_operator.edit', compact('user', 'areaOperators', 'deos'));
+}
+
 
     /**
      * Update Area Operator
@@ -83,7 +87,7 @@ class AreaOperatorController extends Controller
         $operator->delete();
 
         return redirect()
-            ->route('admin.area-operators.index')
+            ->route('admin.area-operators')
             ->with('success', 'Area Operator removed successfully.');
     }
 }

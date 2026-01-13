@@ -45,7 +45,7 @@ class VendorController extends Controller
     /* =======================
      * STORE VENDOR
      * ======================= */
-   public function store(Request $request)
+    public function store(Request $request)
     {
         $validated = $request->validate([
             'shop_name' => 'required|string|max:255',
@@ -112,8 +112,15 @@ class VendorController extends Controller
     {
         $this->authorizeVendor($vendor);
 
-        $mainCategories = Category::orderBy('name')->get();
-        $categories = Category::where('main_category_id', $vendor->main_category_id)->get();
+        // Main categories (parent_id = NULL)
+        $mainCategories = Category::whereNull('parent_id')
+            ->orderBy('name')
+            ->get();
+
+        $categories = Category::where('parent_id', $vendor->main_category_id)
+            ->orderBy('name')
+            ->get();
+
         $plans = Plan::orderBy('amount')->get();
 
         return view('sales.edit_vendor', compact(
@@ -123,6 +130,7 @@ class VendorController extends Controller
             'plans'
         ));
     }
+
 
     /* =======================
      * UPDATE VENDOR
@@ -229,5 +237,24 @@ class VendorController extends Controller
         if ($user->user_type === 'provider' && $vendor->provider_id !== $user->id) {
             abort(403);
         }
+    }
+
+    public function view(Vendor $vendor)
+    {
+        $vendor->load(['mainCategory', 'category', 'plan', 'creator']);
+        return view('admin.vendors.show', compact('vendor'));
+    }
+
+    public function index()
+    {
+        $vendors = Vendor::where('created_by', auth()->id())->latest()->paginate(10);
+        return view('sales.vendor_list', compact('vendors'));
+    }
+
+    public function destroy($id)
+    {
+        Vendor::findOrFail($id)->delete();
+
+        return back()->with('success', 'Vendor deleted successfully');
     }
 }

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminMessageController;
 use App\Http\Controllers\Admin\AreaOperatorController;
 use App\Http\Controllers\Admin\BlockedUserController;
 use App\Http\Controllers\Admin\UserController;
@@ -23,6 +24,7 @@ use App\Http\Controllers\Admin\OfferController;
 use App\Http\Controllers\Admin\RewardController;
 use App\Http\Controllers\Deo\SalesmanlistController;
 use App\Http\Controllers\RecommendationController;
+use App\Http\Controllers\Salesman\salesmanMessageController;
 
 /*
 |--------------------------------------------------------------------------
@@ -35,7 +37,7 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('auth.login');
 });
 Route::get('register/area-operator', [UserRegisterController::class, 'createAreaOperator'])->name('admin.area-operators.create');
 Route::post('register/area-operator', [UserRegisterController::class, 'storeAreaOperator'])->name('admin.area-operators.store');
@@ -67,6 +69,11 @@ Route::middleware(['auth', 'role:admin'])
         // ================= DASHBOARD & USERS =================
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
         Route::get('/users', [UserController::class, 'index'])->name('users');
+        Route::get('/users/{user}', [UserController::class, 'show'])->name('users.show');
+        Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
+        Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
+        Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
+        Route::get('/shop-owners', [DashboardController::class, 'shopUsers'])->name('shop-owners');
 
         // ================= AREA OPERATORS =================
         Route::get('/area-operators', [AreaOperatorController::class, 'index'])->name('area-operators');
@@ -78,6 +85,7 @@ Route::middleware(['auth', 'role:admin'])
         Route::get('/deos', [DeoController::class, 'index'])->name('deos');
         Route::get('/deos/{deo}', [DeoController::class, 'show'])->name('deos.show');
         Route::get('/deos/{deo}/edit', [DeoController::class, 'edit'])->name('deos.edit');
+        Route::put('/admin/deos/{id}', [DeoController::class, 'update'])->name('deos.update');
         Route::delete('/deos/{deo}', [DeoController::class, 'destroy'])->name('deos.destroy');
 
         // ================= SALESMEN =================
@@ -122,7 +130,11 @@ Route::middleware(['auth', 'role:admin'])
         Route::post('/daily-challenges/store', [RewardController::class, 'storeDailyChallenge'])->name('daily_challenge.store');
         Route::delete('/daily-challenges/{id}', [RewardController::class, 'deleteDailyChallenge'])->name('daily_challenges.delete');
 
-        /*
+
+        Route::get('messages', [AdminMessageController::class, 'index'])->name('messages.index');
+        Route::get('messages/create', [AdminMessageController::class, 'create'])->name('messages.create');
+        Route::post('messages', [AdminMessageController::class, 'store'])->name('messages.store');
+        Route::post('/messages/{id}/reply', [AdminMessageController::class, 'reply'])->name('messages.reply');        /*
         |--------------------------------------------------------------------------
         | VERIFICATION & BLOCKING
         |--------------------------------------------------------------------------
@@ -150,7 +162,7 @@ Route::middleware(['auth', 'role:admin'])
         Route::post('/profile/change-password', [ProfileController::class, 'changePassword'])->name('profile.change-password');
         // Logout
         Route::post('/logout', action: [ProfileController::class, 'logout'])->name('logout');
-
+        Route::get('/vendors/{vendor}', [VendorController::class, 'view'])->name('vendors.show');
         Route::post('/vendor-verifications/{id}/approve', [VerificationController::class, 'approve'])->name('vendor-verifications.approve');
         Route::delete('/vendor-verifications/{id}/reject', [VerificationController::class, 'reject'])->name('vendor-verifications.reject');
         Route::get('/blocked-users', [BlockedUserController::class, 'index'])->name('blocked-users');
@@ -210,12 +222,21 @@ Route::middleware(['auth', 'role:salesman'])
         Route::get('/add-vendor', [VendorController::class, 'create'])->name('add-vendor');
         Route::get('/vendor-list', [VendorController::class, 'index'])->name('vendor-list');
         Route::post('sales/vendors/store', [VendorController::class, 'store'])->name('vendors.store');
+        Route::get('/vendors/{id}/edit', [VendorController::class, 'edit'])->name('vendors.edit');
+        Route::put('/salesman/vendors/{vendor}', [VendorController::class, 'update'])->name('vendors.update');
+        Route::delete('salesman/vendors/{id}', [VendorController::class, 'destroy'])->name('vendors.destroy');
+
+        Route::get('/messages', [SalesmanMessageController::class, 'index'])->name('messages.index');
+        Route::get('/messages/create', [SalesmanMessageController::class, 'create'])->name('messages.create'); // ✅ this
+        Route::get('/messages/{id}', [SalesmanMessageController::class, 'show'])->name('messages.show');
+        Route::post('/messages', [SalesmanMessageController::class, 'store'])->name('messages.store');
+        Route::post('/messages/{id}/reply', [SalesmanMessageController::class, 'reply'])->name('messages.reply');
+
 
         Route::get('sales/vendors/{vendor}/edit', [VendorController::class, 'edit'])->name('vendors.edit');
         Route::patch('vendors/{vendor}/toggle', [VendorController::class, 'toggleStatus'])->name('vendors.toggle');
         Route::get('/recommendations', [RecommendationController::class, 'index'])->name('recommendations');
         Route::post('/recommendations', [RecommendationController::class, 'store'])->name('recommendations.store');
-
     });
 
 
@@ -234,14 +255,15 @@ Route::middleware(['auth', 'role:user'])
 
 Route::middleware('auth')->group(function () {
 
-    Route::get('/messages', function () {
-        return view('messages.index');
-    })->name('messages.index');
+    Route::get('/messages', [\App\Http\Controllers\UserMessageController::class, 'index'])
+        ->name('messages.index');
 
     Route::get('/settings', function () {
         return view('settings.index');
     })->name('settings');
 });
+
+
 
 
 /*

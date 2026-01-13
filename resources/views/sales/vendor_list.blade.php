@@ -8,7 +8,7 @@
             <div class="page-title-box d-flex align-items-center justify-content-between">
                 <h4 class="mb-0">My Vendors</h4>
                 <ol class="breadcrumb m-0">
-                    <li class="breadcrumb-item"><a href="{{ route('sales.dashboard') }}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('salesman.dashboard') }}">Dashboard</a></li>
                     <li class="breadcrumb-item active">Vendor List</li>
                 </ol>
             </div>
@@ -73,7 +73,6 @@
                             <th>Contact</th>
                             <th>Location</th>
                             <th>Plan</th>
-                            <th>Status</th>
                             <th>Verification</th>
                             <th>Actions</th>
                         </tr>
@@ -100,41 +99,37 @@
                                 </td>
 
                                 <td>
-                                    @if ($vendor->is_active)
-                                        <span class="badge bg-success">Active</span>
-                                    @else
-                                        <span class="badge bg-danger">Disabled</span>
-                                    @endif
-                                </td>
-
-                                <td>
                                     @php
-                                        $verificationClass = match ($vendor->verification_status) {
-                                            'Approved' => 'bg-success',
-                                            'Pending' => 'bg-warning',
+                                        $verificationClass = match ($vendor->status) {
+                                            'approved' => 'bg-success',
+                                            'pending' => 'bg-warning',
+                                            'rejected' => 'bg-danger',
                                             default => 'bg-secondary',
                                         };
                                     @endphp
                                     <span class="badge {{ $verificationClass }}">
-                                        {{ $vendor->verification_status }}
+                                        {{ $vendor->status }}
                                     </span>
                                 </td>
 
 
                                 <td>
-                                    <a href="{{ route('sales.vendors.edit', $vendor->id) }}"
+                                    <a href="{{ route('salesman.vendors.edit', $vendor->id) }}"
                                         class="btn btn-sm btn-primary">
                                         Edit
                                     </a>
 
-                                    <form action="{{ route('sales.vendors.toggle', $vendor->id) }}" method="POST"
-                                        class="d-inline">
+                                    <form action="{{ route('salesman.vendors.destroy', $vendor->id) }}" method="POST"
+                                        class="d-inline"
+                                        onsubmit="return confirm('Are you sure you want to delete this vendor?');">
                                         @csrf
-                                        @method('PATCH')
-                                        <button class="btn btn-sm btn-warning">
-                                            {{ $vendor->is_active ? 'Disable' : 'Enable' }}
+                                        @method('DELETE')
+
+                                        <button class="btn btn-sm btn-danger">
+                                            Delete
                                         </button>
                                     </form>
+
                                 </td>
                             </tr>
                         @empty
