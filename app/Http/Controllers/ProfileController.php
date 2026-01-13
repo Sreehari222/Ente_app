@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\Submission;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\Storage;
 
 class ProfileController extends Controller
 {
@@ -17,9 +19,16 @@ class ProfileController extends Controller
 
     public function show()
     {
-        return view('admin.profile.show', [
-            'user' => Auth::user()
-        ]);
+        // logged-in admin/user
+        $user = Auth::user();
+
+        // get all submissions of the current user
+        $submissions = Submission::where('user_id', $user->id)
+            ->latest()
+            ->get();
+
+        // pass both variables to the view
+        return view('admin.profile.show', compact('user', 'submissions'));
     }
     public function edit(Request $request): View
     {
@@ -91,5 +100,35 @@ class ProfileController extends Controller
         $request->session()->regenerateToken();
 
         return redirect('/login'); // redirect to login page
+    }
+
+    public function submissions(Request $request)
+    {
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'file'  => 'required|file|mimes:jpg,jpeg,png,pdf|max:2048',
+        ]);
+
+        $path = $request->file('file')->store('submissions', 'public');
+
+        Submission::create([
+            'user_id'   => auth()->id(),
+            'title'     => $request->title,
+            'file_path' => $path,
+        ]);
+
+        return back()->with('success', 'Submission uploaded successfully');
+    }
+
+    public function removesubmissions(Submission $submission){
+    if ($submission->user_id !== auth()->id()) {
+        abort(403);
+    }
+
+    \Illuminate\Support\Facades\Storage::disk('public')->delete($submission->file_path);
+
+    $submission->delete();
+
+    return back()->with('success', 'Submission deleted successfully.');
     }
 }

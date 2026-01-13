@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
+
+
 class VendorController extends Controller
 {
     /* =======================
@@ -27,7 +29,7 @@ class VendorController extends Controller
 
         $plans = Plan::orderBy('amount')->get();
 
-        return view('sales.add_vendor', compact('mainCategories', 'plans'));
+        return view('salesman.vendors.add_vendor', compact('mainCategories', 'plans'));
     }
 
 
@@ -57,32 +59,27 @@ class VendorController extends Controller
             'address' => 'nullable|string',
             'google_map' => 'nullable|url',
             'service_area' => 'nullable|string',
-
             'main_category_id' => 'required|integer',
             'category_id' => 'required|integer',
             'plan_id' => 'required|integer',
-
             'opening_time' => 'nullable',
             'closing_time' => 'nullable',
-
             'payment_mode' => 'required|string',
             'transaction_id' => 'nullable|string',
             'reference_number' => 'nullable|string',
-
             'special_recommendation' => 'nullable|string',
             'internal_comments' => 'nullable|string',
-
+            'denominations.*' => 'nullable|integer|min:0',
             'photo' => 'nullable|image|max:2048',
             'gallery.*' => 'nullable|image|max:2048',
         ]);
 
-        /* ================= PHOTO ================= */
+        // ================= PHOTO =================
         if ($request->hasFile('photo')) {
-            $validated['photo'] = $request->file('photo')
-                ->store('vendors/profile', 'public');
+            $validated['photo'] = $request->file('photo')->store('vendors/profile', 'public');
         }
 
-        /* ================= GALLERY ================= */
+        // ================= GALLERY =================
         if ($request->hasFile('gallery')) {
             $gallery = [];
             foreach ($request->file('gallery') as $image) {
@@ -91,19 +88,30 @@ class VendorController extends Controller
             $validated['gallery'] = $gallery;
         }
 
-        /* ================= SOCIAL LINKS ================= */
+        // ================= SOCIAL LINKS =================
         if ($request->has('social_links')) {
             $validated['social_links'] = $request->social_links;
         }
 
-        /* ================= META ================= */
-        $validated['created_by'] = Auth::id();
+        // ================= DENOMINATIONS =================
+        $denominations = $request->input('denominations', []);
+        $totalAmount = 0;
+        foreach ($denominations as $value => $count) {
+            $totalAmount += $value * $count;
+        }
+        $validated['denominations'] = $denominations;
+        $validated['total_amount'] = $totalAmount;
+
+        // ================= META =================
+        $validated['created_by'] = auth()->id();
         $validated['status'] = 'pending';
 
         Vendor::create($validated);
 
         return back()->with('success', 'Vendor submitted for admin approval');
     }
+
+
 
     /* =======================
      * EDIT FORM
@@ -123,7 +131,7 @@ class VendorController extends Controller
 
         $plans = Plan::orderBy('amount')->get();
 
-        return view('sales.edit_vendor', compact(
+        return view('salesman.vendors.edit_vendor', compact(
             'vendor',
             'mainCategories',
             'categories',
@@ -136,61 +144,79 @@ class VendorController extends Controller
      * UPDATE VENDOR
      * ======================= */
     public function update(Request $request, Vendor $vendor)
-    {
-        $this->authorizeVendor($vendor);
+{
+    $validated = $request->validate([
+        'shop_name' => 'required|string|max:255',
+        'owner_name' => 'nullable|string|max:255',
+        'mobile' => 'required|string|max:20',
+        'whatsapp' => 'nullable|string|max:20',
+        'email' => 'nullable|email',
+        'digipin' => 'nullable|string|max:10',
+        'address' => 'nullable|string',
+        'google_map' => 'nullable|url',
+        'service_area' => 'nullable|string',
+        'main_category_id' => 'required|integer',
+        'category_id' => 'required|integer',
+        'plan_id' => 'required|integer',
+        'opening_time' => 'nullable',
+        'closing_time' => 'nullable',
+        'payment_mode' => 'required|string',
+        'transaction_id' => 'nullable|string',
+        'reference_number' => 'nullable|string',
+        'special_recommendation' => 'nullable|string',
+        'internal_comments' => 'nullable|string',
+        'denominations.*' => 'nullable|integer|min:0',
+        'photo' => 'nullable|image|max:2048',
+        'gallery.*' => 'nullable|image|max:2048',
+    ]);
 
-        $request->validate([
-            'shop_name'        => 'required',
-            'main_category_id' => 'required|exists:main_categories,id',
-            'category_id'      => 'required|exists:categories,id',
-            'mobile'           => 'required',
-            'plan_id'          => 'required|exists:plans,id',
-        ]);
-
-        $data = $request->only([
-            'shop_name',
-            'main_category_id',
-            'category_id',
-            'owner_name',
-            'referral_number',
-            'mobile',
-            'whatsapp',
-            'address',
-            'google_map',
-            'opening_time',
-            'closing_time',
-            'service_area',
-            'special_recommendation',
-            'plan_id',
-        ]);
-
-        /* ---------- Replace Photo ---------- */
-        if ($request->hasFile('photo')) {
-            if ($vendor->photo) {
-                Storage::disk('public')->delete($vendor->photo);
-            }
-            $data['photo'] = $request->file('photo')->store('vendors/photos', 'public');
+    // ================= PHOTO =================
+     if ($request->hasFile('photo')) {
+        if ($vendor->photo && Storage::disk('public')->exists($vendor->photo)) {
+            Storage::disk('public')->delete($vendor->photo);
         }
-
-        /* ---------- Replace Gallery ---------- */
-        if ($request->hasFile('gallery')) {
-            if ($vendor->gallery) {
-                foreach ($vendor->gallery as $old) {
-                    Storage::disk('public')->delete($old);
-                }
-            }
-
-            $gallery = [];
-            foreach ($request->gallery as $img) {
-                $gallery[] = $img->store('vendors/gallery', 'public');
-            }
-            $data['gallery'] = $gallery;
-        }
-
-        $vendor->update($data);
-
-        return back()->with('success', 'Vendor updated successfully.');
+        $validated['photo'] = $request->file('photo')->store('vendors/profile', 'public');
+    } else {
+        $validated['photo'] = $vendor->photo; // keep old photo
     }
+
+    // ================= GALLERY =================
+    if ($request->hasFile('gallery')) {
+        $gallery = $vendor->gallery ?? []; // existing images
+        foreach ($request->file('gallery') as $image) {
+            $gallery[] = $image->store('vendors/gallery', 'public');
+        }
+        $validated['gallery'] = $gallery;
+    } else {
+        $validated['gallery'] = $vendor->gallery; // preserve old
+    }
+
+    // ================= SOCIAL LINKS =================
+    if ($request->has('social_links')) {
+        $validated['social_links'] = $request->social_links;
+    } else {
+        $validated['social_links'] = $vendor->social_links; // preserve old
+    }
+
+    // ================= DENOMINATIONS =================
+    $denominations = $request->input('denominations', $vendor->denominations ?? []);
+    $totalAmount = 0;
+    foreach ($denominations as $value => $count) {
+        $totalAmount += $value * $count;
+    }
+    $validated['denominations'] = $denominations;
+    $validated['total_amount'] = $totalAmount;
+
+    // ================= META =================
+    $validated['created_by'] = $vendor->created_by; // keep original creator
+    $validated['status'] = $vendor->status;        // preserve current status
+
+    $vendor->update($validated);
+
+   return redirect()->route('salesman.vendor-list')->with('success', 'Vendor updated successfully');
+
+}
+
 
     /* =======================
      * TOGGLE STATUS
@@ -248,7 +274,7 @@ class VendorController extends Controller
     public function index()
     {
         $vendors = Vendor::where('created_by', auth()->id())->latest()->paginate(10);
-        return view('sales.vendor_list', compact('vendors'));
+        return view('salesman.vendors.vendor_list', compact('vendors'));
     }
 
     public function destroy($id)

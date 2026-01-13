@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\Admin\AdminMessageController;
 use App\Http\Controllers\Admin\AreaOperatorController;
 use App\Http\Controllers\Admin\BlockedUserController;
 use App\Http\Controllers\Admin\UserController;
@@ -20,11 +19,15 @@ use App\Http\Controllers\SettingsController;
 use App\Models\Category;
 
 use App\Http\Controllers\Admin\AdvertisementController;
+use App\Http\Controllers\Admin\CompanyMessageController;
+use App\Http\Controllers\Admin\InfoController;
 use App\Http\Controllers\Admin\OfferController;
+use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\RewardController;
 use App\Http\Controllers\Deo\SalesmanlistController;
-use App\Http\Controllers\RecommendationController;
-use App\Http\Controllers\Salesman\salesmanMessageController;
+use App\Http\Controllers\MessageController;
+use App\Http\Controllers\salesman\RecommendationController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -131,10 +134,7 @@ Route::middleware(['auth', 'role:admin'])
         Route::delete('/daily-challenges/{id}', [RewardController::class, 'deleteDailyChallenge'])->name('daily_challenges.delete');
 
 
-        Route::get('messages', [AdminMessageController::class, 'index'])->name('messages.index');
-        Route::get('messages/create', [AdminMessageController::class, 'create'])->name('messages.create');
-        Route::post('messages', [AdminMessageController::class, 'store'])->name('messages.store');
-        Route::post('/messages/{id}/reply', [AdminMessageController::class, 'reply'])->name('messages.reply');        /*
+       /*
         |--------------------------------------------------------------------------
         | VERIFICATION & BLOCKING
         |--------------------------------------------------------------------------
@@ -160,6 +160,37 @@ Route::middleware(['auth', 'role:admin'])
         Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
         Route::put('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
         Route::post('/profile/change-password', [ProfileController::class, 'changePassword'])->name('profile.change-password');
+        Route::post('/admin/submissions', [ProfileController::class, 'submissions'])->name('submissions.submissions');
+        Route::delete('/admin/submissions/{submission}', [ProfileController::class, 'removesubmissions'])->name('submissions.destroy');
+
+
+        // Notices
+        Route::get('notices', [InfoController::class, 'notices'])->name('notices.index');
+        Route::post('notices', [InfoController::class, 'storeNotice'])->name('notices.store');
+        Route::get('notices/{id}/edit', [InfoController::class, 'editNotice'])->name('notices.edit');
+        Route::put('notices/{id}', [InfoController::class, 'updateNotice'])->name('notices.update');
+        Route::delete('notices/{id}', [InfoController::class, 'destroyNotice'])->name('notices.destroy');
+
+        // Emergency Contacts
+        Route::get('contacts', [InfoController::class, 'contacts'])->name('contacts.index');
+        Route::post('contacts', [InfoController::class, 'storeContact'])->name('contacts.store');
+        Route::get('contacts/{id}/edit', [InfoController::class, 'editContact'])->name('contacts.edit');
+        Route::put('contacts/{id}', [InfoController::class, 'updateContact'])->name('contacts.update');
+        Route::delete('contacts/{id}', [InfoController::class, 'destroyContact'])->name('contacts.destroy');
+
+        // Announcements
+        Route::get('announcements', [InfoController::class, 'announcements'])->name('announcements.index');
+        Route::post('announcements', [InfoController::class, 'storeAnnouncement'])->name('announcements.store');
+        Route::get('announcements/{id}/edit', [InfoController::class, 'editAnnouncement'])->name('announcements.edit');
+        Route::put('announcements/{id}', [InfoController::class, 'updateAnnouncement'])->name('announcements.update');
+        Route::delete('announcements/{id}', [InfoController::class, 'destroyAnnouncement'])->name('announcements.destroy');
+
+        Route::get('company/messages', [CompanyMessageController::class, 'index'])->name('company.messages.index');
+        Route::post('company/messages', [CompanyMessageController::class, 'store'])->name('company.messages.store');
+        Route::delete('company/messages/{id}', [CompanyMessageController::class, 'destroy'])->name('company.messages.destroy');
+
+        Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
+
         // Logout
         Route::post('/logout', action: [ProfileController::class, 'logout'])->name('logout');
         Route::get('/vendors/{vendor}', [VendorController::class, 'view'])->name('vendors.show');
@@ -202,8 +233,6 @@ Route::middleware(['auth', 'role:deo'])
         // Route::get('/reports/daily', [DeoReportController::class, 'daily'])->name('reports.daily');
         // Route::get('/reports/monthly', [DeoReportController::class, 'monthly'])->name('reports.monthly');
 
-        // Route::get('/messages', [DeoMessageController::class, 'index'])->name('messages');
-        // Route::get('/notifications', [DeoNotificationController::class, 'index'])->name('notifications');
 
         // Route::get('/profile', [DeoProfileController::class, 'show'])->name('profile');
     });
@@ -226,17 +255,11 @@ Route::middleware(['auth', 'role:salesman'])
         Route::put('/salesman/vendors/{vendor}', [VendorController::class, 'update'])->name('vendors.update');
         Route::delete('salesman/vendors/{id}', [VendorController::class, 'destroy'])->name('vendors.destroy');
 
-        Route::get('/messages', [SalesmanMessageController::class, 'index'])->name('messages.index');
-        Route::get('/messages/create', [SalesmanMessageController::class, 'create'])->name('messages.create'); // ✅ this
-        Route::get('/messages/{id}', [SalesmanMessageController::class, 'show'])->name('messages.show');
-        Route::post('/messages', [SalesmanMessageController::class, 'store'])->name('messages.store');
-        Route::post('/messages/{id}/reply', [SalesmanMessageController::class, 'reply'])->name('messages.reply');
-
 
         Route::get('sales/vendors/{vendor}/edit', [VendorController::class, 'edit'])->name('vendors.edit');
         Route::patch('vendors/{vendor}/toggle', [VendorController::class, 'toggleStatus'])->name('vendors.toggle');
-        Route::get('/recommendations', [RecommendationController::class, 'index'])->name('recommendations');
-        Route::post('/recommendations', [RecommendationController::class, 'store'])->name('recommendations.store');
+        // Route::get('/recommendations', [RecommendationController::class, 'index'])->name('recommendations');
+        // Route::post('/recommendations', [RecommendationController::class, 'store'])->name('recommendations.store');
     });
 
 
@@ -248,27 +271,39 @@ Route::middleware(['auth', 'role:salesman'])
 Route::middleware(['auth', 'role:user'])
     ->prefix('user')
     ->group(function () {
-        Route::get('/dashboard', [App\Http\Controllers\User\DashboardController::class, 'index'])
-            ->name('user.dashboard');
+        Route::get('/dashboard', [App\Http\Controllers\User\DashboardController::class, 'index'])->name('user.dashboard');
+    });
+
+    Route::middleware(['auth'])->group(function () {
+    Route::prefix('admin')->middleware('role:admin')->name('admin.')->group(function () {
+        Route::get('messages', [MessageController::class, 'index'])->name('messages.index');
+        Route::get('messages/create', [MessageController::class, 'create'])->name('messages.create');
+        Route::post('messages/{message}/reply', [MessageController::class, 'reply'])->name('messages.reply');
     });
 
 
-Route::middleware('auth')->group(function () {
+    Route::prefix('deo')->middleware('role:deo')->name('deo.')->group(function () {
+        Route::get('messages', [MessageController::class, 'index'])->name('messages.index');
+        Route::get('messages/create', [MessageController::class, 'create'])->name('messages.create');
+    });
 
-    Route::get('/messages', [\App\Http\Controllers\UserMessageController::class, 'index'])
-        ->name('messages.index');
+    Route::prefix('salesman')->middleware('role:salesman')->name('salesman.')->group(function () {
+        Route::get('messages', [MessageController::class, 'index'])->name('messages.index');
+        Route::get('messages/create', [MessageController::class, 'create'])->name('messages.create');
+    });
 
-    Route::get('/settings', function () {
-        return view('settings.index');
-    })->name('settings');
+    Route::prefix('area-operator')->middleware('role:area_operator')->name('area_operator.')->group(function () {
+        Route::get('messages', [MessageController::class, 'index'])->name('messages.index');
+        Route::get('messages/create', [MessageController::class, 'create'])->name('messages.create');
+    });
+    Route::post('messages', [MessageController::class, 'store'])->name('messages.store');
+    Route::post('messages/{message}/reply', [MessageController::class, 'reply'])->name('messages.reply');
 });
 
 
 
 
-/*
-|--------------------------------------------------------------------------
-| AUTH ROUTES (Breeze / Fortify)
-|--------------------------------------------------------------------------
-*/
+
+
+
 require __DIR__ . '/auth.php';

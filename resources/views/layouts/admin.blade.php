@@ -1,4 +1,3 @@
-{{-- resources/views/layouts/admin.blade.php --}}
 <!doctype html>
 <html lang="en" data-layout="vertical" data-topbar="light" data-sidebar="dark" data-sidebar-size="lg"
     data-sidebar-image="none" data-preloader="disable" data-theme="default" data-theme-colors="default">
@@ -103,7 +102,7 @@
                                 </a>
 
                                 <a class="dropdown-item d-flex justify-content-between align-items-center"
-                                    href="{{ route('messages.index') }}">
+                                    href="{{ route('admin.messages.index') }}">
                                     <span>
                                         <i class="mdi mdi-message-text-outline me-1"></i> Messages
                                     </span>
@@ -168,22 +167,26 @@
                     </div>
                     <ul class="navbar-nav" id="navbar-nav">
                         <li class="menu-title"><span data-key="t-menu">Menu</span></li>
-                        <li class="nav-item">
-                            <a class="nav-link menu-link" href="{{ route('admin.dashboard') }}">
+                        <li class="nav-item {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
+                            <a class="nav-link menu-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}"
+                                href="{{ route('admin.dashboard') }}">
                                 <i class="ri-dashboard-2-line"></i> <span
                                     data-key="t-dashboards">Dashboards</span></a>
                         </li> {{-- end Dashboard Menu --}}
 
                         <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-pages">User
                                 Management</span></li>
-                        <li class="nav-item">
-                            <a class="nav-link menu-link" href="#sidebarUser" data-bs-toggle="collapse"
-                                role="button" aria-expanded="false" aria-controls="sidebarUser">
+                        <li
+                            class="nav-item {{ request()->routeIs('admin.verification.index') || request()->routeIs('admin.blocked-users') ? 'active' : '' }}">
+                            <a class="nav-link menu-link {{ request()->routeIs('admin.verification.index') || request()->routeIs('admin.blocked-users') ? 'active' : '' }}"
+                                href="#sidebarUser" data-bs-toggle="collapse" role="button" aria-expanded="false"
+                                aria-controls="sidebarUser">
                                 <i class="ri-account-circle-line"></i>
                                 <span data-key="t-User">Users</span>
                             </a>
 
-                            <div class="collapse menu-dropdown" id="sidebarUser">
+                            <div class="collapse menu-dropdown {{ request()->routeIs('admin.verification.index') || request()->routeIs('admin.blocked-users') ? 'show' : '' }}"
+                                id="sidebarUser">
                                 <ul class="nav nav-sm flex-column">
 
                                     <li class="nav-item">
@@ -192,16 +195,18 @@
                                         </a>
                                     </li>
 
-                                    <li class="nav-item">
+                                    <li
+                                        class="nav-item {{ request()->routeIs('admin.verification.index') ? 'active' : '' }}">
                                         <a href="{{ route('admin.verification.index') }}"
-                                            class="nav-link {{ request()->routeIs('vendor-verifications*') ? 'active' : '' }}">
+                                            class="nav-link {{ request()->routeIs('admin.verification.index') ? 'active' : '' }}">
                                             Vendor Verification Requests
                                         </a>
                                     </li>
 
-                                    <li class="nav-item">
+                                    <li
+                                        class="nav-item {{ request()->routeIs('admin.blocked-users') ? 'active' : '' }}">
                                         <a href="{{ route('admin.blocked-users') }}"
-                                            class="nav-link {{ request()->routeIs('admin.blocked-users.index') ? 'active' : '' }}"
+                                            class="nav-link {{ request()->routeIs('admin.blocked-users') ? 'active' : '' }}"
                                             data-key="t-blocked-users">
                                             Blocked Users
                                         </a>
@@ -212,42 +217,51 @@
                             </div>
                         </li>
 
-                        <li class="nav-item">
-                            <a class="nav-link menu-link" href="{{ route('admin.categories.index') }}">
+                        <li class="nav-item {{ request()->routeIs('admin.categories.index') ? 'active' : '' }}">
+                            <a class="nav-link menu-link {{ request()->routeIs('admin.categories.index') ? 'active' : '' }}"
+                                href="{{ route('admin.categories.index') }}">
                                 <i class="ri-file-chart-line"></i> <span data-key="t-categories">
                                     Categories</span></a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link menu-link" href="{{ route('admin.plans.create') }}">
+                        <li class="nav-item {{ request()->routeIs('admin.plans.create') ? 'active' : '' }}">
+                            <a class="nav-link menu-link {{ request()->routeIs('admin.plans.create') ? 'active' : '' }}"
+                                href="{{ route('admin.plans.create') }}">
                                 <i class="ri-file-chart-line"></i> <span data-key="t-plans"> Plans</span></a>
                         </li>
 
                         <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-pages">Staff Management
                                 Section</span>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link menu-link" href="#sidebarStaff" data-bs-toggle="collapse"
-                                role="button" aria-expanded="false" aria-controls="sidebarStaff">
+                        <li
+                            class="nav-item {{ request()->routeIs('admin.area-operators') || request()->routeIs('admin.deos') || request()->routeIs('admin.salesmen') ? 'active' : '' }}">
+                            <a class="nav-link menu-link {{ request()->routeIs('admin.area-operators') || request()->routeIs('admin.deos') || request()->routeIs('admin.salesmen') ? 'active' : '' }}"
+                                href="#sidebarStaff" data-bs-toggle="collapse" role="button" aria-expanded="false"
+                                aria-controls="sidebarStaff">
                                 <i class="ri-team-line"></i>
                                 <span data-key="t-list">Staff Management </span>
                             </a>
-                            <div class="collapse menu-dropdown" id="sidebarStaff">
+                            <div class="collapse menu-dropdown {{ request()->routeIs('admin.area-operators') || request()->routeIs('admin.deos') || request()->routeIs('admin.salesmen') ? 'show' : '' }}"
+                                id="sidebarStaff">
                                 <ul class="nav nav-sm flex-column">
-                                    <li class="nav-item">
-                                        <a href="{{ route('admin.area-operators') }}" class="nav-link"
+                                    <li
+                                        class="nav-item {{ request()->routeIs('admin.area-operators') ? 'active' : '' }}">
+                                        <a href="{{ route('admin.area-operators') }}"
+                                            class="nav-link {{ request()->routeIs('admin.area-operators') ? 'active' : '' }}"
                                             data-key="t-providers">
                                             Area Operators
                                         </a>
                                     </li>
 
-                                    <li class="nav-item">
-                                        <a href="{{ route('admin.deos') }}" class="nav-link"
+                                    <li class="nav-item {{ request()->routeIs('admin.deos') ? 'active' : '' }}">
+                                        <a href="{{ route('admin.deos') }}"
+                                            class="nav-link {{ request()->routeIs('admin.deos') ? 'active' : '' }}"
                                             data-key="t-shop-owners">
                                             Digital Entry Operators(DEO)
                                         </a>
                                     </li>
-                                    <li class="nav-item">
-                                        <a href="{{ route('admin.salesmen') }}" class="nav-link"
+                                    <li class="nav-item {{ request()->routeIs('admin.salesmen') ? 'active' : '' }}">
+                                        <a href="{{ route('admin.salesmen') }}"
+                                            class="nav-link {{ request()->routeIs('admin.salesmen') ? 'active' : '' }}"
                                             data-key="t-shop-owners">
                                             Sales Man
                                         </a>
@@ -259,22 +273,27 @@
 
                         <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-pages">Pages</span>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link menu-link" href="#sidebarAdvertisement" data-bs-toggle="collapse"
-                                role="button" aria-expanded="false" aria-controls="sidebarAdvertisement">
+                        <li
+                            class="nav-item {{ request()->routeIs('admin.all-ads') || request()->routeIs('admin.create-ads') ? 'active' : '' }}">
+                            <a class="nav-link menu-link {{ request()->routeIs('admin.all-ads') || request()->routeIs('admin.create-ads') ? 'active' : '' }}"
+                                href="#sidebarAdvertisement" data-bs-toggle="collapse" role="button"
+                                aria-expanded="false" aria-controls="sidebarAdvertisement">
                                 <i class="ri-megaphone-line"></i>
                                 <span data-key="t-list">Advertisements </span>
                             </a>
-                            <div class="collapse menu-dropdown" id="sidebarAdvertisement">
+                            <div class="collapse menu-dropdown {{ request()->routeIs('admin.all-ads') || request()->routeIs('admin.create-ads') ? 'show' : '' }}"
+                                id="sidebarAdvertisement">
                                 <ul class="nav nav-sm flex-column">
-                                    <li class="nav-item">
-                                        <a href="{{ route('admin.all-ads') }}" class="nav-link"
+                                    <li class="nav-item {{ request()->routeIs('admin.all-ads') ? 'active' : '' }}">
+                                        <a href="{{ route('admin.all-ads') }}"
+                                            class="nav-link {{ request()->routeIs('admin.all-ads') ? 'active' : '' }}"
                                             data-key="t-all-ads">
                                             All Advertisements
                                         </a>
                                     </li>
-                                    <li class="nav-item">
-                                        <a href="{{ route('admin.create-ads') }}" class="nav-link"
+                                    <li class="nav-item {{ request()->routeIs('admin.create-ads') ? 'active' : '' }}">
+                                        <a href="{{ route('admin.create-ads') }}"
+                                            class="nav-link {{ request()->routeIs('admin.create-ads') ? 'active' : '' }}"
                                             data-key="t-create-ad">
                                             Create New Ad </a>
                                     </li>
@@ -282,29 +301,31 @@
                                         <a href="" class="nav-link" data-key="t-pending-ad">
                                             Pending Ads </a>
                                     </li>
-                                    <li class="nav-item">
-                                        <a href="" class="nav-link" data-key="t-pending-ad">
-                                            Ads Slots Management </a>
-                                    </li>
                                 </ul>
                             </div>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link menu-link" href="#sidebarOffer" data-bs-toggle="collapse"
-                                role="button" aria-expanded="false" aria-controls="sidebarOffer">
+                        <li
+                            class="nav-item {{ request()->routeIs('admin.all-offers') || request()->routeIs('admin.create-offer') ? 'active' : '' }}">
+                            <a class="nav-link menu-link {{ request()->routeIs('admin.all-offers') || request()->routeIs('admin.create-offer') ? 'active' : '' }}"
+                                href="#sidebarOffer" data-bs-toggle="collapse" role="button" aria-expanded="false"
+                                aria-controls="sidebarOffer">
                                 <i class="ri-coupon-3-line"></i>
                                 <span data-key="t-list">Offers & Promotions </span>
                             </a>
-                            <div class="collapse menu-dropdown" id="sidebarOffer">
+                            <div class="collapse menu-dropdown {{ request()->routeIs('admin.all-offers') || request()->routeIs('admin.create-offer') ? 'show' : '' }}"
+                                id="sidebarOffer">
                                 <ul class="nav nav-sm flex-column">
-                                    <li class="nav-item">
-                                        <a href="{{ route('admin.all-offers') }}" class="nav-link"
+                                    <li class="nav-item {{ request()->routeIs('admin.all-offers') ? 'active' : '' }}">
+                                        <a href="{{ route('admin.all-offers') }}"
+                                            class="nav-link {{ request()->routeIs('admin.all-offers') ? 'active' : '' }}"
                                             data-key="t-all-offers">
                                             All Offers
                                         </a>
                                     </li>
-                                    <li class="nav-item">
-                                        <a href="{{ route('admin.create-offer') }}" class="nav-link"
+                                    <li
+                                        class="nav-item {{ request()->routeIs('admin.create-offer') ? 'active' : '' }}">
+                                        <a href="{{ route('admin.create-offer') }}"
+                                            class="nav-link {{ request()->routeIs('admin.create-offer') ? 'active' : '' }}"
                                             data-key="t-create-offer">
                                             Create Offer </a>
                                     </li>
@@ -316,16 +337,20 @@
                             </div>
                         </li>
 
-                        <li class="nav-item">
-                            <a class="nav-link menu-link" href="#sidebarReward" data-bs-toggle="collapse"
-                                role="button" aria-expanded="false" aria-controls="sidebarReward">
+                        <li class="nav-item {{ request()->routeIs('admin.daily-challenges') ? 'active' : '' }}">
+                            <a class="nav-link menu-link {{ request()->routeIs('admin.daily-challenges') ? 'active' : '' }}"
+                                href="#sidebarReward" data-bs-toggle="collapse" role="button" aria-expanded="false"
+                                aria-controls="sidebarReward">
                                 <i class="ri-trophy-line"></i>
                                 <span data-key="t-list">Rewards System </span>
                             </a>
-                            <div class="collapse menu-dropdown" id="sidebarReward">
+                            <div class="collapse menu-dropdown {{ request()->routeIs('admin.daily-challenges') ? 'show' : '' }}"
+                                id="sidebarReward">
                                 <ul class="nav nav-sm flex-column">
-                                    <li class="nav-item">
-                                        <a href="{{ route('admin.daily-challenges') }}" class="nav-link"
+                                    <li
+                                        class="nav-item {{ request()->routeIs('admin.daily-challenges') ? 'active' : '' }}">
+                                        <a href="{{ route('admin.daily-challenges') }}"
+                                            class="nav-link {{ request()->routeIs('admin.daily-challenges') ? 'active' : '' }}"
                                             data-key="t-challenges">
                                             Daily Challenges
                                         </a>
@@ -372,73 +397,108 @@
                         </li>
                         <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-pages">Information
                                 Section</span></li>
-                        <li class="nav-item">
-                            <a class="nav-link menu-link" href="#sidebarInfo" data-bs-toggle="collapse"
-                                role="button" aria-expanded="false" aria-controls="sidebarInfo">
+                        <li
+                            class="nav-item {{ request()->routeIs('admin.notices.index') || request()->routeIs('admin.emergency-contacts.index') || request()->routeIs('admin.announcements.index') ? 'active' : '' }}">
+                            <a class="nav-link menu-link {{ request()->routeIs('admin.notices.index') || request()->routeIs('admin.emergency-contacts.index') || request()->routeIs('admin.announcements.index') ? 'active' : '' }}"
+                                href="#sidebarInfo" data-bs-toggle="collapse" role="button"
+                                aria-expanded="{{ request()->routeIs('admin.notices.index') || request()->routeIs('admin.contacts.index') || request()->routeIs('admin.announcements.index') ? 'true' : 'false' }}"
+                                aria-controls="sidebarInfo">
                                 <i class="ri-information-line"></i>
                                 <span data-key="t-list">Information & Notices </span>
                             </a>
-                            <div class="collapse menu-dropdown" id="sidebarInfo">
+                            <div class="collapse menu-dropdown {{ request()->routeIs('admin.notices.index') || request()->routeIs('admin.contacts.index') || request()->routeIs('admin.announcements.index') ? 'show' : '' }}"
+                                id="sidebarInfo">
                                 <ul class="nav nav-sm flex-column">
-                                    <li class="nav-item">
-                                        <a href="" class="nav-link" data-key="t-notices">
+                                    <li
+                                        class="nav-item {{ request()->routeIs('admin.notices.index') ? 'active' : '' }}">
+                                        <a href="{{ route('admin.notices.index') }}"
+                                            class="nav-link {{ request()->routeIs('admin.notices.index') ? 'active' : '' }}"
+                                            data-key="t-notices">
                                             Panchayath Notices
                                         </a>
                                     </li>
-                                    <li class="nav-item">
-                                        <a href="" class="nav-link" data-key="t-emergency-contacts">
-                                            Emergency Contacts </a>
+                                    <li
+                                        class="nav-item {{ request()->routeIs('admin.contacts.index') ? 'active' : '' }}">
+                                        <a href="{{ route('admin.contacts.index') }}"
+                                            class="nav-link {{ request()->routeIs('admin.contacts.index') ? 'active' : '' }}"
+                                            data-key="t-contacts">
+                                            Emergency Contacts
+                                        </a>
                                     </li>
-                                    <li class="nav-item">
-                                        <a href="" class="nav-link" data-key="t-announcements">
-                                            Local Announcements </a>
+                                    <li
+                                        class="nav-item {{ request()->routeIs('admin.announcements.index') ? 'active' : '' }}">
+                                        <a href="{{ route('admin.announcements.index') }}"
+                                            class="nav-link {{ request()->routeIs('admin.announcements.index') ? 'active' : '' }}"
+                                            data-key="t-announcements">
+                                            Local Announcements
+                                        </a>
                                     </li>
                                 </ul>
                             </div>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link menu-link" href="{">
-                                <i class="ri-file-chart-line"></i> <span data-key="t-report">Reports</span></a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link menu-link" href="{{ route('admin.messages.index') }}">
-                                <i class="ri-message-3-line"></i>
-                                <span data-key="t-messages">Messages</span>
+                            <a class="nav-link menu-link {{ request()->routeIs('admin.reports*') ? 'active' : '' }}"
+                                href="{{ route('admin.reports.index') }}">
+                                <i class="ri-file-chart-line"></i>
+                                <span data-key="t-report">Reports</span>
                             </a>
                         </li>
 
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs(auth()->user()->role . '.messages.*') ? 'active' : '' }}"
+                                href="{{ route(auth()->user()->role . '.messages.index') }}">
+                                <i class="ri-message-3-line"></i>
+                                <span>Messages</span>
+                            </a>
+                        </li>
+
+                        <li class="nav-item {{ request()->routeIs('admin.company.messages.index') ? 'active' : '' }}">
+                            <a class="nav-link menu-link {{ request()->routeIs('admin.company.messages.index') ? 'active' : '' }}"
+                                href="{{ route('admin.company.messages.index') }}">
+                                <i class="ri-building-line"></i>
+                                <span data-key="t-company-messages">Company Messages</span>
+                            </a>
+                        </li>
 
                         <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-pages">Profile &
                                 Settings</span></li>
-                        <li class="nav-item">
-                            <a class="nav-link menu-link" href="#sidebarProfile" data-bs-toggle="collapse"
-                                role="button" aria-expanded="false" aria-controls="sidebarProfile">
+                        <li
+                            class="nav-item {{ request()->routeIs('admin.settings.general') || request()->routeIs('admin.settings.app') || request()->routeIs('admin.settings.notifications') ? 'active' : '' }}">
+                            <a class="nav-link menu-link {{ request()->routeIs('admin.settings.general') || request()->routeIs('admin.settings.app') || request()->routeIs('admin.settings.notifications') ? 'active' : '' }}"
+                                href="#sidebarProfile" data-bs-toggle="collapse" role="button"
+                                aria-expanded="false" aria-controls="sidebarProfile">
                                 <i class="ri-settings-3-line"></i>
                                 <span data-key="t-list">Settings</span>
                             </a>
-                            <div class="collapse menu-dropdown" id="sidebarProfile">
+                            <div class="collapse menu-dropdown {{ request()->routeIs('admin.settings.general') || request()->routeIs('admin.settings.app') || request()->routeIs('admin.settings.notifications') ? 'show' : '' }}"
+                                id="sidebarProfile">
                                 <ul class="nav nav-sm flex-column">
-                                    <li class="nav-item">
+                                    <li
+                                        class="nav-item {{ request()->routeIs('admin.settings.general') ? 'active' : '' }}">
                                         <a href="{{ route('admin.settings.general') }}"
-                                            class="nav-link {{ request()->routeIs('settings.general') ? 'active' : '' }}">
+                                            class="nav-link {{ request()->routeIs('admin.settings.general') ? 'active' : '' }}">
                                             General Settings
                                         </a>
                                     </li>
-                                    <li class="nav-item">
-                                        <a href="{{ route('admin.settings.app') }}" class="nav-link"
+                                    <li
+                                        class="nav-item {{ request()->routeIs('admin.settings.app') ? 'active' : '' }}">
+                                        <a href="{{ route('admin.settings.app') }}"
+                                            class="nav-link {{ request()->routeIs('admin.settings.app') ? 'active' : '' }}"
                                             data-key="t-emergency-contacts">
                                             App Configuration </a>
                                     </li>
-                                    <li class="nav-item">
-                                        <a href="{{ route('admin.settings.notifications') }}" class="nav-link"
+                                    <li
+                                        class="nav-item {{ request()->routeIs('admin.settings.notifications') ? 'active' : '' }}">
+                                        <a href="{{ route('admin.settings.notifications') }}"
+                                            class="nav-link {{ request()->routeIs('admin.settings.notifications') ? 'active' : '' }}"
                                             data-key="t-announcements">
                                             Notification Settings</a>
                                     </li>
                                 </ul>
                             </div>
                         </li>
-                        <li class="nav-item {{ request()->routeIs('profile.*') ? 'active' : '' }}">
-                            <a class="nav-link menu-link {{ request()->routeIs('profile.*') ? 'active' : '' }}"
+                        <li class="nav-item {{ request()->routeIs('admin.profile.*') ? 'active' : '' }}">
+                            <a class="nav-link menu-link {{ request()->routeIs('admin.profile.*') ? 'active' : '' }}"
                                 href="{{ route('admin.profile.show') }}">
                                 <i class="ri-file-chart-line"></i>
                                 <span data-key="t-profile">Profile</span>

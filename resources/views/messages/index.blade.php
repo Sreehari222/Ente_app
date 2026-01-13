@@ -1,122 +1,144 @@
-@extends('layouts.sales')
+@extends('layouts.sales') {{-- or layouts.user --}}
 
 @section('content')
-<div class="container-fluid">
 
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h4>Admin Messages</h4>
+    <style>
+        .chat-list {
+            max-height: 75vh;
+            overflow-y: auto;
+        }
 
-        <a href="{{ route('salesman.messages.create') }}" class="btn btn-primary">
-            <i class="ri-send-plane-line"></i> New Message
-        </a>
-    </div>
+        .unread {
+            background: #eef5ff;
+        }
 
-    <div class="row">
+        .bubble {
+            max-width: 70%;
+            padding: 10px 14px;
+            border-radius: 15px;
+        }
 
-        <!-- LEFT: MESSAGE LIST -->
-        <div class="col-md-4">
-            <div class="card h-100">
-                <div class="card-header">
-                    <strong>Sent Messages</strong>
-                </div>
+        .mine {
+            background: #198754;
+            color: #fff;
+        }
 
-                <div class="list-group list-group-flush" style="max-height:70vh; overflow-y:auto">
-                    @forelse($messages as $msg)
-                        <a href="?message={{ $msg->id }}"
-                           class="list-group-item list-group-item-action {{ request('message') == $msg->id ? 'active' : '' }}">
+        .theirs {
+            background: #e9ecef;
+        }
+    </style>
 
-                            <div class="d-flex justify-content-between">
-                                <strong>{{ $msg->sender->name }}</strong>
-                                <small>{{ $msg->created_at->format('d M') }}</small>
-                            </div>
+    <div class="container-fluid">
+        <div class="row">
 
-                            <div class="text-muted small">
-                                {{ Str::limit($msg->message, 40) }}
-                            </div>
-                        </a>
-                    @empty
-                        <div class="p-3 text-center text-muted">No messages yet</div>
-                    @endforelse
-                </div>
-            </div>
-        </div>
+            <!-- LEFT: CHAT LIST -->
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-header fw-bold">Inbox</div>
 
-        <!-- RIGHT: CHAT VIEW -->
-        <div class="col-md-8">
-            <div class="card h-100">
-
-                @php
-                    $activeMessage = request('message')
-                        ? $messages->where('id', request('message'))->first()
-                        : null;
-                @endphp
-
-                @if ($activeMessage)
-
-                    <div class="card-header">
-                        <strong>{{ $msg->sender->name }}</strong>
-                        <div class="small text-muted">
-                            Sent on {{ $activeMessage->created_at->format('d M Y, h:i A') }}
-                        </div>
-                    </div>
-
-                    <div class="card-body" style="height:45vh; overflow-y:auto">
-
-                        <!-- ORIGINAL MESSAGE (Admin always RIGHT) -->
-                        <div class="d-flex justify-content-end mb-3">
-                            <div class="bg-primary text-white p-3 rounded" style="max-width:75%">
-                                {{ $activeMessage->message }}
-                            </div>
-                        </div>
-
-                        <!-- REPLIES -->
-                        @foreach ($activeMessage->replies as $reply)
-
+                    <div class="list-group list-group-flush chat-list">
+                        @foreach ($messages as $chat)
                             @php
-                                $isMine = $reply->sender_id === auth()->id();
+                                $pivot = $chat->users->firstWhere('id', auth()->id())?->pivot;
+                                $isUnread = $pivot && is_null($pivot->read_at);
+                                $lastReply = $chat->replies->last();
+                                $admin = $chat->sender;
                             @endphp
 
-                            <div class="d-flex {{ $isMine ? 'justify-content-end' : 'justify-content-start' }} mb-2">
+                            <a href="?message={{ $chat->id }}"
+                                class="list-group-item {{ $isUnread ? 'unread' : '' }} {{ request('message') == $chat->id ? 'active' : '' }}">
 
-                                <div class="{{ $isMine ? 'bg-primary text-white' : 'bg-success text-white' }} p-2 rounded"
-                                     style="max-width:75%">
-
-                                    {{ $reply->message }}
-
-                                    <div class="small text-light mt-1 text-end">
-                                        {{ $reply->created_at->format('d M Y, h:i A') }}
-                                    </div>
+                                <div class="d-flex justify-content-between">
+                                    <strong>{{ $admin?->name ?? 'Admin' }}</strong>
+                                    <small class="text-muted">
+                                        {{ optional($lastReply)->created_at?->format('h:i A') }}
+                                    </small>
                                 </div>
 
-                            </div>
+                                <div class="small text-muted">
+                                    {{ Str::limit(optional($lastReply)->message ?? $chat->message, 35) }}
+                                </div>
+
+                                @if ($isUnread)
+                                    <span class="badge bg-primary mt-1">New</span>
+                                @endif
+                            </a>
                         @endforeach
                     </div>
-
-                    <!-- REPLY FORM -->
-                    <div class="card-footer">
-                        <form action="{{ route('salesman.messages.reply', $activeMessage->id) }}" method="POST">
-                            @csrf
-                            <div class="input-group">
-                                <input type="text" name="message" class="form-control"
-                                       placeholder="Type your reply..." required>
-                                <button class="btn btn-primary">
-                                    <i class="ri-send-plane-line"></i> Send
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-
-                @else
-                    <div class="card-body d-flex align-items-center justify-content-center text-muted">
-                        <div class="text-center">
-                            <i class="ri-chat-3-line fs-1 mb-2"></i>
-                            <p>Select a message to view conversation</p>
-                        </div>
-                    </div>
-                @endif
-
+                </div>
             </div>
+
+            <!-- RIGHT: CHAT VIEW -->
+            <div class="col-md-8">
+                <div class="card h-100">
+
+                    @php
+                        $activeChat = request('message') ? $messages->firstWhere('id', request('message')) : null;
+
+                        if ($activeChat) {
+                            $activeChat->users()->updateExistingPivot(auth()->id(), [
+                                'read_at' => now(),
+                            ]);
+                        }
+                    @endphp
+
+                    @if ($activeChat)
+                        <div class="card-header fw-bold">
+                            Admin
+                        </div>
+
+                        <div class="card-body" id="chatBody" style="height:55vh; overflow-y:auto">
+
+                            <!-- Original -->
+                            <div class="d-flex justify-content-start mb-3">
+                                <div class="bubble theirs">
+                                    {{ $activeChat->message }}
+                                </div>
+                            </div>
+
+                            <!-- Replies -->
+                            @foreach ($activeChat->replies as $reply)
+                                @php $mine = $reply->sender_id === auth()->id(); @endphp
+
+                                <div class="d-flex mb-2 {{ $mine ? 'justify-content-end' : 'justify-content-start' }}">
+                                    <div class="bubble {{ $mine ? 'mine' : 'theirs' }}">
+                                        {{ $reply->message }}
+                                        <div class="small text-muted text-end mt-1">
+                                            {{ $reply->created_at->format('h:i A') }}
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+
+                        <!-- Reply -->
+                        <div class="card-footer">
+                            <form action="{{ route('admin.messages.reply', $activeChat->id) }}" method="POST">
+                                @csrf
+                                <div class="input-group">
+                                    <input type="text" name="message" class="form-control" placeholder="Type reply..."
+                                        required>
+                                    <button class="btn btn-success">
+                                        <i class="ri-send-plane-line"></i>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    @else
+                        <div class="card-body d-flex justify-content-center align-items-center text-muted">
+                            Select a message to read
+                        </div>
+                    @endif
+
+                </div>
+            </div>
+
         </div>
     </div>
-</div>
+
+    <script>
+        const chatBody = document.getElementById('chatBody');
+        if (chatBody) chatBody.scrollTop = chatBody.scrollHeight;
+    </script>
+
 @endsection

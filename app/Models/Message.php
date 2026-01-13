@@ -8,23 +8,33 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Message extends Model
 {
-    use HasFactory;
 
-    protected $fillable = ['sender_id', 'title', 'message'];
-
+    protected $fillable = [
+        'sender_id',
+        'title',
+        'message',
+    ];
     public function sender()
     {
         return $this->belongsTo(User::class, 'sender_id');
     }
 
-    public function users(): BelongsToMany
+    /**
+     * Users in this chat
+     */
+    public function users()
     {
         return $this->belongsToMany(User::class)
-            ->withPivot('is_read', 'read_at')
+            ->withPivot(['is_read', 'read_at'])
             ->withTimestamps();
     }
+
+
+    /**
+     * Replies inside chat
+     */
     public function replies()
-{
-    return $this->hasMany(MessageReply::class);
-}
+    {
+        return $this->hasMany(MessageReply::class);
+    }
 }

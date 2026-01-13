@@ -7,7 +7,7 @@
             <i class="ri-arrow-left-line"></i> Back
         </a>
 
-        <form action="{{ route('admin.messages.store') }}" method="POST">
+        <form action="{{ route('salesman.messages.store') }}" method="POST">
             @csrf
 
             <div class="mb-3">

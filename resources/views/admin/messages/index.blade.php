@@ -1,138 +1,171 @@
 @extends('layouts.admin')
 
 @section('content')
-    <div class="container-fluid">
 
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h4>Admin Messages</h4>
+<style>
+    .chat-list {
+        max-height: 75vh;
+        overflow-y: auto;
+    }
+    .chat-item.unread {
+        background: #eef5ff;
+    }
+    .chat-bubble {
+        max-width: 70%;
+        padding: 10px 14px;
+        border-radius: 15px;
+        word-wrap: break-word;
+    }
+    .mine {
+        background: #0d6efd;
+        color: #fff;
+        border-bottom-right-radius: 3px;
+    }
+    .theirs {
+        background: #e9ecef;
+        color: #000;
+        border-bottom-left-radius: 3px;
+    }
+</style>
 
-            <a href="{{ route('admin.messages.create') }}" class="btn btn-primary">
-                <i class="ri-send-plane-line"></i> New Message
-            </a>
-        </div>
+<div class="container-fluid">
+    <div class="row">
 
-        <div class="row">
+        <!-- LEFT: CHAT LIST -->
+        <div class="col-md-4">
+            <div class="card h-100">
 
-            <!-- LEFT: MESSAGE LIST -->
-            <div class="col-md-4">
-                <div class="card h-100">
-                    <div class="card-header">
-                        <strong>Sent Messages</strong>
-                    </div>
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <strong>Messages</strong>
+                    <a href="{{ route('admin.messages.create') }}" class="btn btn-sm btn-primary">
+                        <i class="ri-chat-new-line"></i>
+                    </a>
+                </div>
 
-                    <div class="list-group list-group-flush" style="max-height:70vh; overflow-y:auto">
-                        @forelse($messages as $msg)
-                            @php
-                                $isUnread = isset($msg->pivot) && !$msg->pivot->is_read;
-                            @endphp
+                <div class="list-group list-group-flush chat-list">
 
-                            <a href="?message={{ $msg->id }}"
-                                class="list-group-item list-group-item-action
-          {{ request('message') == $msg->id ? 'active' : '' }}
-          {{ $isUnread ? 'bg-soft-primary' : '' }}">
+                    @foreach ($messages as $chat)
+                        @php
+                            $authId = auth()->id();
+                            $pivot = $chat->users->firstWhere('id', $authId)?->pivot;
+                            $isUnread = $pivot && is_null($pivot->read_at);
+                            $receiver = $chat->users->firstWhere('id', '!=', $authId);
+                            $lastReply = $chat->replies->last();
+                        @endphp
 
-                                <div class="d-flex justify-content-between">
-                                    <strong class="{{ $isUnread ? 'fw-bold text-primary' : '' }}">
-                                        {{ $msg->sender->name }}
-                                    </strong>
+                        <a href="?message={{ $chat->id }}"
+                           class="list-group-item chat-item {{ $isUnread ? 'unread' : '' }} {{ request('message') == $chat->id ? 'active' : '' }}">
 
-                                    <small>
-                                        {{ $msg->created_at->format('d M') }}
-                                        @if ($isUnread)
-                                            <span class="ms-1 badge rounded-pill bg-primary">●</span>
-                                        @endif
-                                    </small>
-                                </div>
-
-                                <div class="text-muted small">
-                                    {{ Str::limit($msg->message, 40) }}
-                                </div>
-
-                            </a>
-
-                        @empty
-                            <div class="p-3 text-center text-muted">
-                                No messages yet
+                            <div class="d-flex justify-content-between">
+                                <strong class="{{ $isUnread ? 'text-primary' : '' }}">
+                                    {{ $receiver?->name }}
+                                </strong>
+                                <small class="text-muted">
+                                    {{ optional($lastReply)->created_at?->format('h:i A') }}
+                                </small>
                             </div>
-                        @endforelse
 
-                    </div>
+                            <div class="small text-muted">
+                                {{ Str::limit(optional($lastReply)->message ?? $chat->message, 35) }}
+                            </div>
+
+                            @if($isUnread)
+                                <span class="badge bg-primary mt-1">New</span>
+                            @endif
+                        </a>
+                    @endforeach
+
                 </div>
             </div>
+        </div>
 
-            <!-- RIGHT: CHAT VIEW -->
-            <div class="col-md-8">
-                <div class="card h-100">
+        <!-- RIGHT: CHAT VIEW -->
+        <div class="col-md-8">
+            <div class="card h-100">
 
+                @php
+                    $activeChat = request('message')
+                        ? $messages->firstWhere('id', request('message'))
+                        : null;
+
+                    if ($activeChat) {
+                        $activeChat->users()->updateExistingPivot(auth()->id(), [
+                            'read_at' => now()
+                        ]);
+                    }
+                @endphp
+
+                @if($activeChat)
                     @php
-                        $activeMessage = request('message')
-                            ? $messages->where('id', request('message'))->first()
-                            : null;
+                        $receiver = $activeChat->users->firstWhere('id', '!=', auth()->id());
                     @endphp
 
-                    @if ($activeMessage)
-                        <div class="card-header">
-                            <strong>{{ $msg->sender->name }}</strong>
-                            <div class="small text-muted">
-                                Sent on {{ $activeMessage->created_at->format('d M Y, h:i A') }}
+                    <!-- HEADER -->
+                    <div class="card-header">
+                        <strong>{{ $receiver?->name }}</strong>
+                        <div class="small text-muted">Chat conversation</div>
+                    </div>
+
+                    <!-- MESSAGES -->
+                    <div class="card-body" id="chatBody" style="overflow-y:auto; height:55vh">
+
+                        <!-- Original message -->
+                        <div class="d-flex justify-content-end mb-3">
+                            <div class="chat-bubble mine">
+                                {{ $activeChat->message }}
                             </div>
                         </div>
 
-                        <div class="card-body" style="height:45vh; overflow-y:auto">
+                        <!-- Replies -->
+                        @foreach($activeChat->replies as $reply)
+                            @php $mine = $reply->sender_id === auth()->id(); @endphp
 
-                            <!-- ORIGINAL MESSAGE (Admin always RIGHT) -->
-                            <div class="d-flex justify-content-end mb-3">
-                                <div class="bg-primary text-white p-3 rounded" style="max-width:75%">
-                                    {{ $activeMessage->message }}
-                                </div>
-                            </div>
-
-                            <!-- REPLIES -->
-                            @foreach ($activeMessage->replies as $reply)
-                                @php
-                                    $isMine = $reply->sender_id === auth()->id();
-                                @endphp
-
-                                <div class="d-flex {{ $isMine ? 'justify-content-end' : 'justify-content-start' }} mb-2">
-
-                                    <div class="{{ $isMine ? 'bg-primary text-white' : 'bg-success text-white' }} p-2 rounded"
-                                        style="max-width:75%">
-
-                                        {{ $reply->message }}
-
-                                        <div class="small text-light mt-1 text-end">
-                                            {{ $reply->created_at->format('d M Y, h:i A') }}
-                                        </div>
+                            <div class="d-flex mb-2 {{ $mine ? 'justify-content-end' : 'justify-content-start' }}">
+                                <div class="chat-bubble {{ $mine ? 'mine' : 'theirs' }}">
+                                    {{ $reply->message }}
+                                    <div class="small text-muted text-end mt-1">
+                                        {{ $reply->created_at->format('h:i A') }}
                                     </div>
-
                                 </div>
-                            @endforeach
-                        </div>
-
-                        <!-- REPLY FORM -->
-                        <div class="card-footer">
-                            <form action="{{ route('admin.messages.reply', $activeMessage->id) }}" method="POST">
-                                @csrf
-                                <div class="input-group">
-                                    <input type="text" name="message" class="form-control"
-                                        placeholder="Type your reply..." required>
-                                    <button class="btn btn-primary">
-                                        <i class="ri-send-plane-line"></i> Send
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
-                    @else
-                        <div class="card-body d-flex align-items-center justify-content-center text-muted">
-                            <div class="text-center">
-                                <i class="ri-chat-3-line fs-1 mb-2"></i>
-                                <p>Select a message to view conversation</p>
                             </div>
-                        </div>
-                    @endif
+                        @endforeach
+                    </div>
 
-                </div>
+                    <!-- INPUT -->
+                    <div class="card-footer">
+                        <form method="POST" action="{{ route('admin.messages.reply', $activeChat->id) }}">
+                            @csrf
+                            <div class="input-group">
+                                <input type="text"
+                                       name="message"
+                                       class="form-control"
+                                       placeholder="Type a message..."
+                                       required>
+                                <button class="btn btn-primary">
+                                    <i class="ri-send-plane-line"></i>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                @else
+                    <div class="card-body d-flex align-items-center justify-content-center text-muted">
+                        <div class="text-center">
+                            <i class="ri-chat-3-line fs-1 mb-2"></i>
+                            <p>Select a chat to start messaging</p>
+                        </div>
+                    </div>
+                @endif
+
             </div>
         </div>
+
     </div>
+</div>
+
+<script>
+    const chatBody = document.getElementById('chatBody');
+    if (chatBody) chatBody.scrollTop = chatBody.scrollHeight;
+</script>
+
 @endsection

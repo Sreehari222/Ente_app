@@ -4,7 +4,7 @@
 <div class="container-fluid">
     <h4 class="mb-3">Send Message</h4>
 
-    <form action="{{ route('admin.messages.store') }}" method="POST">
+    <form action="{{ route('admin.messages.create') }}" method="POST">
         @csrf
 
         <div class="mb-3">

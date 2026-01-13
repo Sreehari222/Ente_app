@@ -57,27 +57,24 @@
                                         </td>
                                         <td class="text-center">
 
-    {{-- View --}}
-    <a href="{{ route('admin.blocked-users.show', $vendor->id) }}"
-       class="btn btn-sm btn-info me-1"
-       title="View Vendor">
-        <i class="ri-eye-line"></i>
-    </a>
+                                            {{-- View --}}
+                                            <a href="{{ route('admin.blocked-users.show', $vendor->id) }}"
+                                                class="btn btn-sm btn-info me-1" title="View Vendor">
+                                                <i class="ri-eye-line"></i>
+                                            </a>
 
-    {{-- Approve --}}
-    <form action="{{ route('admin.blocked-users.approve', $vendor->id) }}"
-          method="POST" class="d-inline">
-        @csrf
-        <button type="submit"
-                class="btn btn-sm btn-success"
-                title="Approve"
-                onclick="return confirm('Are you sure you want to approve this vendor?')">
-            <i class="ri-check-line"></i>
-        </button>
-    </form>
+                                            {{-- Approve --}}
+                                            <form action="{{ route('admin.blocked-users.approve', $vendor->id) }}"
+                                                method="POST" class="d-inline">
+                                                @csrf
+                                                <button type="submit" class="btn btn-sm btn-success" title="Approve"
+                                                    onclick="return confirm('Are you sure you want to approve this vendor?')">
+                                                    <i class="ri-check-line"></i>
+                                                </button>
+                                            </form>
 
-</td>
-<Fieldset></Fieldset>
+                                        </td>
+                                        <Fieldset></Fieldset>
                                     </tr>
                                 @empty
                                     <tr>

@@ -22,6 +22,8 @@ class User extends Authenticatable
         'email_verified_at',
         'profile_photo',
         'cover_photo',
+        'last_login_at',
+        'last_logout_at',
     ];
 
     protected $hidden = [
@@ -64,10 +66,30 @@ class User extends Authenticatable
     // MESSAGE RELATIONSHIP
     // =====================
 
-    public function messages(): BelongsToMany
+    public function messages()
     {
-        return $this->belongsToMany(\App\Models\Message::class)
-            ->withPivot('is_read', 'read_at')
+        return $this->belongsToMany(Message::class)
+            ->withPivot(['is_read', 'read_at'])
             ->withTimestamps();
+    }
+
+
+    public function activityLogs()
+    {
+        return $this->hasMany(UserActivityLog::class);
+    }
+
+    public function lastLogin()
+    {
+        return $this->hasOne(UserActivityLog::class)
+            ->where('action', 'login')
+            ->latest();
+    }
+
+    public function lastLogout()
+    {
+        return $this->hasOne(UserActivityLog::class)
+            ->where('action', 'logout')
+            ->latest();
     }
 }

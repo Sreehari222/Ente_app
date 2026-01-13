@@ -199,12 +199,12 @@
                         <li class="menu-title"><span>Communication</span></li>
 
                         <li class="nav-item">
-                            <a class="nav-link menu-link" href="{{ route('salesman.messages.index') }}">
-                                <i class="ri-mail-line"></i>
-                                <span>Admin Messages</span>
+                            <a class="nav-link {{ request()->routeIs(auth()->user()->role . '.messages.*') ? 'active' : '' }}"
+                                href="{{ route(auth()->user()->role . '.messages.index') }}">
+                                <i class="ri-message-3-line"></i>
+                                <span>Messages</span>
                             </a>
                         </li>
-
 
                         <li class="nav-item">
                             <a class="nav-link menu-link" href="#">
