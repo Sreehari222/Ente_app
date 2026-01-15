@@ -1,4 +1,4 @@
-@extends('layouts.sales')
+@extends('layouts.salesman')
 
 @section('title', 'Add Vendor')
 
@@ -103,11 +103,34 @@
                         <select name="plan_id" class="form-select" required>
                             <option value="">Select</option>
                             @foreach ($plans as $plan)
-                                <option value="{{ $plan->id }}">
+                                <option value="{{ $plan->id }}" data-amount="{{ $plan->amount }}">
                                     {{ $plan->title }} - ₹{{ $plan->amount }}
                                 </option>
                             @endforeach
                         </select>
+
+                        <div class="col-12 mt-3 d-none" id="emi_box">
+                            <div class="card p-3 border border-primary">
+                                <h6>EMI Option</h6>
+                                <div class="row g-3 align-items-center">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Select EMI Duration (Months)</label>
+                                        <select id="emi_duration" name="emi_duration" class="form-select">
+                                            <option value="">Select</option>
+                                            <option value="3">3 Months</option>
+                                            <option value="6">6 Months</option>
+                                            <option value="9">9 Months</option>
+                                            <option value="12">12 Months</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Amount per EMI</label>
+                                        <input type="text" name="emi_amount" id="emi_amount" class="form-control" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -188,6 +211,11 @@
                     <div class="col-md-12">
                         <label class="form-label">Reference Number</label>
                         <input type="text" name="reference_number" class="form-control">
+                    </div>
+
+                    <div class="col-md-12">
+                        <label class="form-label">Amount</label>
+                        <input type="text" name="amount" class="form-control">
                     </div>
 
                     {{-- Denominations (only visible if Cash) --}}
@@ -313,8 +341,44 @@
         paymentMode.addEventListener('change', function() {
             const isCash = this.value === 'cash';
             transactionBox.classList.toggle('d-none', !
-            isCash); // hide transaction if cash? Actually for cash, transaction not needed
+                isCash); // hide transaction if cash? Actually for cash, transaction not needed
             denominationsBox.classList.toggle('d-none', !isCash); // show denominations only if cash
+        });
+
+
+        // ========== EMI CALCULATION ==========
+        const planSelect = document.querySelector('select[name="plan_id"]');
+        const emiBox = document.getElementById('emi_box');
+        const emiDuration = document.getElementById('emi_duration');
+        const emiAmount = document.getElementById('emi_amount');
+
+        planSelect.addEventListener('change', function() {
+            const selectedOption = this.selectedOptions[0];
+            const planAmount = parseFloat(selectedOption.dataset.amount) || 0;
+
+            if (planAmount > 0) {
+                emiBox.classList.remove('d-none');
+                // reset EMI duration and amount
+                emiDuration.value = '';
+                emiAmount.value = '';
+            } else {
+                emiBox.classList.add('d-none');
+                emiDuration.value = '';
+                emiAmount.value = '';
+            }
+        });
+
+        emiDuration.addEventListener('change', function() {
+            const duration = parseInt(this.value) || 0;
+            const selectedOption = planSelect.selectedOptions[0];
+            const planAmount = parseFloat(selectedOption.dataset.amount) || 0;
+
+            if (duration > 0 && planAmount > 0) {
+                const perEmi = (planAmount / duration).toFixed(2);
+                emiAmount.value = perEmi;
+            } else {
+                emiAmount.value = '';
+            }
         });
     </script>
 @endpush

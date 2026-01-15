@@ -69,45 +69,36 @@
                                 </td>
 
                                 <!-- Actions -->
-                                <td class="text-center">
-                                    <div class="dropdown">
-                                        <button class="btn btn-sm btn-soft-secondary dropdown-toggle"
-                                                data-bs-toggle="dropdown">
-                                            Actions
-                                        </button>
-                                        <ul class="dropdown-menu dropdown-menu-end">
+                               <td class="text-center">
+    <div class="d-flex justify-content-center gap-2">
 
-                                            <li>
-                                                <a href="{{ route('salesmen.show', $salesman->id) }}"
-                                                   class="dropdown-item">
-                                                    <i class="ri-eye-line me-2"></i> View
-                                                </a>
-                                            </li>
+        <a href="{{ route('salesmen.show', $salesman->id) }}"
+           class="btn btn-sm btn-outline-info"
+           title="View">
+            <i class="ri-eye-line"></i>
+        </a>
 
-                                            <li>
-                                                <a href="{{ route('salesmen.edit', $salesman->id) }}"
-                                                   class="dropdown-item">
-                                                    <i class="ri-edit-line me-2"></i> Edit
-                                                </a>
-                                            </li>
+        <a href="{{ route('salesmen.edit', $salesman->id) }}"
+           class="btn btn-sm btn-outline-warning"
+           title="Edit">
+            <i class="ri-edit-line"></i>
+        </a>
 
-                                            <li><hr class="dropdown-divider"></li>
+        <form action="{{ route('salesmen.destroy', $salesman->id) }}"
+              method="POST">
+            @csrf
+            @method('DELETE')
+            <button type="submit"
+                    class="btn btn-sm btn-outline-danger"
+                    title="Delete"
+                    onclick="return confirm('Are you sure?')">
+                <i class="ri-delete-bin-line"></i>
+            </button>
+        </form>
 
-                                            <li>
-                                                <form action="{{ route('salesmen.destroy', $salesman->id) }}"
-                                                      method="POST"
-                                                      onsubmit="return confirm('Are you sure?')">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button class="dropdown-item text-danger">
-                                                        <i class="ri-delete-bin-line me-2"></i> Delete
-                                                    </button>
-                                                </form>
-                                            </li>
+    </div>
+</td>
 
-                                        </ul>
-                                    </div>
-                                </td>
                             </tr>
                         @empty
                             <tr>

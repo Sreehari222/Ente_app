@@ -182,16 +182,10 @@
                         <li class="menu-title"><span>Analytics</span></li>
 
                         <li class="nav-item">
-                            <a class="nav-link menu-link" href="#">
+                            <a class="nav-link menu-link {{ request()->routeIs('salesman.statistics') ? 'active' : '' }}"
+                                href="{{ route('salesman.statistics') }}">
                                 <i class="ri-bar-chart-2-line"></i>
                                 <span>Your Statistics</span>
-                            </a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a class="nav-link menu-link" href="">
-                                <i class="ri-lightbulb-flash-line"></i>
-                                <span>Your Recommendations</span>
                             </a>
                         </li>
 
@@ -221,21 +215,36 @@
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link menu-link" href="#">
+                            <a class="nav-link menu-link
+                            {{ request()->routeIs('salesman.company.messages.index') ? 'active' : '' }}
+                            {{ request()->routeIs('deo.company.messages.index') ? 'active' : '' }}
+                            {{ request()->routeIs('area_operator.company.messages.index') ? 'active' : '' }}
+                                "
+                                href="{{ route(auth()->user()->role . '.company.messages.index') }}">
                                 <i class="ri-message-3-line"></i>
                                 <span>Company Messages</span>
                             </a>
                         </li>
 
+
                         {{-- Submissions --}}
                         <li class="menu-title"><span>Management</span></li>
 
                         <li class="nav-item">
-                            <a class="nav-link menu-link" href="#">
+                            <a class="nav-link menu-link
+                            {{ request()->routeIs('salesman.submissions.*', 'deo.submissions.*', 'area.submissions.*') ? 'active' : '' }}"
+                                href="
+                                @if (auth()->user()->role === 'salesman') {{ route('salesman.submissions.index') }}
+                                @elseif(auth()->user()->role === 'deo')
+                                {{ route('deo.submissions.index') }}
+                                @else
+                                {{ route('area.submissions.index') }} @endif
+                                ">
                                 <i class="ri-file-list-3-line"></i>
                                 <span>Submissions</span>
                             </a>
                         </li>
+
 
                         {{-- Account --}}
                         <li class="menu-title"><span>Account</span></li>
@@ -249,7 +258,7 @@
                         </li>
 
                         <li class="nav-item">
-                            <form method="POST" action="">
+                            <form method="POST" action="{{ route('logout') }}">
                                 @csrf
                                 <button type="submit" class="nav-link menu-link logout-btn">
                                     <i class="ri-logout-box-r-line"></i>

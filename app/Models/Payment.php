@@ -10,11 +10,33 @@ class Payment extends Model
     use HasFactory;
 
     protected $fillable = [
-        'vendor_id', 'mode', 'transaction_id', 'status','transaction_id'
+        'vendor_id',
+        'plan_id',
+        'total_amount',
+        'emi_duration',
+        'emi_amount'
     ];
 
-    public function vendor()
+    public function installments()
     {
-        return $this->belongsTo(Vendor::class);
+        return $this->hasMany(PaymentInstallment::class);
     }
+
+    public function paidAmount()
+    {
+        return $this->installments()->sum('amount');
+    }
+
+    public function remainingAmount()
+    {
+        return $this->total_amount - $this->paidAmount();
+    }
+
+    public function vendor()
+{
+    return $this->belongsTo(Vendor::class);
+}
+
+
+
 }

@@ -12,19 +12,29 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
-    protected $fillable = [
-        'name',
-        'email',
-        'password',
-        'role',
-        'area_operator_id',
-        'deo_id',
-        'email_verified_at',
-        'profile_photo',
-        'cover_photo',
-        'last_login_at',
-        'last_logout_at',
-    ];
+   protected $fillable = [
+    'name',
+    'email',
+    'password',
+    'role',
+
+    'phone_number',
+    'address',
+
+    'account_number',
+    'ifsc_code',
+
+    'area_operator_id',
+    'deo_id',
+
+    'profile_photo',
+    'cover_photo',
+
+    'email_verified_at',
+    'last_login_at',
+    'last_logout_at',
+];
+
 
     protected $hidden = [
         'password',
@@ -51,11 +61,6 @@ class User extends Authenticatable
         return $this->belongsTo(User::class, 'area_operator_id');
     }
 
-    public function salesmen()
-    {
-        return $this->hasMany(User::class, 'deo_id')
-            ->where('role', 'salesman');
-    }
 
     public function deo()
     {
@@ -92,4 +97,34 @@ class User extends Authenticatable
             ->where('action', 'logout')
             ->latest();
     }
+
+    public function vendors()
+    {
+        return $this->hasMany(Vendor::class, 'created_by');
+    }
+
+    public function submissions()
+    {
+        return $this->hasMany(Submission::class, 'user_id');
+    }
+
+    public function salesman()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
+
+    public function salesmen()
+    {
+        return $this->hasMany(User::class, 'deo_id');
+    }
+
+
+
+
+
 }

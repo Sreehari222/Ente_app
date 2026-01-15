@@ -29,12 +29,12 @@ class AuthenticatedSessionController extends Controller
 
         $user = Auth::user();
 
-        // ✅ Update last login time (NO Intelephense warning)
+        // Update last login time
         $user->forceFill([
             'last_login_at' => now(),
         ])->save();
 
-        // ✅ Log LOGIN activity
+        // Log login activity
         UserActivityLog::create([
             'user_id'    => $user->id,
             'action'     => 'login',
@@ -42,11 +42,12 @@ class AuthenticatedSessionController extends Controller
         ]);
 
         return match ($user->role) {
-            'admin'         => redirect()->intended('/admin/dashboard'),
-            'area_operator' => redirect()->intended('/area/dashboard'),
-            'deo'           => redirect()->intended('/deo/dashboard'),
-            'salesman'      => redirect()->intended('/salesman/dashboard'),
-            default         => redirect()->intended('/user/dashboard'),
+            'admin'         => redirect()->route('admin.dashboard'),
+            'area_operator' => redirect()->route('area.dashboard'),
+            'deo'           => redirect()->route('deo.dashboard'),
+            'salesman'      => redirect()->route('salesman.dashboard'),
+            'vendor'        => redirect()->route('vendor.dashboard'),
+            default         => redirect()->route('login'),
         };
     }
 

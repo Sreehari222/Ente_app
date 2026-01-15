@@ -397,6 +397,15 @@
                         </li>
                         <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-pages">Information
                                 Section</span></li>
+
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('emis.*') ? 'active' : '' }}"
+                                href="{{ route('emis.index') }}">
+                                <i class="ri-money-rupee-circle-line"></i>
+                                <span>EMI Monitoring</span>
+                            </a>
+                        </li>
+
                         <li
                             class="nav-item {{ request()->routeIs('admin.notices.index') || request()->routeIs('admin.emergency-contacts.index') || request()->routeIs('admin.announcements.index') ? 'active' : '' }}">
                             <a class="nav-link menu-link {{ request()->routeIs('admin.notices.index') || request()->routeIs('admin.emergency-contacts.index') || request()->routeIs('admin.announcements.index') ? 'active' : '' }}"
@@ -452,7 +461,8 @@
                             </a>
                         </li>
 
-                        <li class="nav-item {{ request()->routeIs('admin.company.messages.index') ? 'active' : '' }}">
+                        <li
+                            class="nav-item {{ request()->routeIs('admin.company.messages.index') ? 'active' : '' }}">
                             <a class="nav-link menu-link {{ request()->routeIs('admin.company.messages.index') ? 'active' : '' }}"
                                 href="{{ route('admin.company.messages.index') }}">
                                 <i class="ri-building-line"></i>

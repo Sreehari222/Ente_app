@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Deo;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\Vendor;
 use Illuminate\Support\Facades\Auth;
 
 class SalesmanlistController extends Controller
@@ -13,6 +14,7 @@ class SalesmanlistController extends Controller
         $salesmen = User::where('role', 'salesman')
             ->where('deo_id', Auth::id())
             ->get();
+
 
         return view('deo.salesman.index', compact('salesmen'));
     }
@@ -24,18 +26,22 @@ class SalesmanlistController extends Controller
             ->where('deo_id', auth()->id())
             ->firstOrFail();
 
-        return view('deo.salesman.show', compact('salesman'));
+        $vendors = Vendor::where('created_by', $salesman->id)->latest()->get();
+
+
+        return view('deo.salesman.show', compact('salesman','vendors'));
     }
 
     public function edit($id)
     {
-        $salesman = User::where('id', $id)
-            ->where('role', 'salesman')
-            ->where('deo_id', auth()->id())
-            ->firstOrFail();
+        $salesman = User::where('role', 'salesman')
+            ->where('deo_id', Auth::id())
+            ->findOrFail($id);
 
-        return view('deo.salesmen.edit', compact('salesman'));
+        return view('deo.salesman.edit', compact('salesman'));
     }
+
+
 
     public function update(\Illuminate\Http\Request $request, $id)
     {

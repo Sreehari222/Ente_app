@@ -6,9 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\MainCategory;
 use App\Models\Payment;
+use App\Models\PaymentInstallment;
 use App\Models\Plan;
 use App\Models\User;
 use App\Models\Vendor;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -49,7 +51,8 @@ class VendorController extends Controller
      * ======================= */
     public function store(Request $request)
     {
-        $validated = $request->validate([
+        // ================= VALIDATION =================
+        $request->validate([
             'shop_name' => 'required|string|max:255',
             'owner_name' => 'nullable|string|max:255',
             'mobile' => 'required|string|max:20',
@@ -59,163 +62,134 @@ class VendorController extends Controller
             'address' => 'nullable|string',
             'google_map' => 'nullable|url',
             'service_area' => 'nullable|string',
-            'main_category_id' => 'required|integer',
-            'category_id' => 'required|integer',
-            'plan_id' => 'required|integer',
+            'main_category_id' => 'required|exists:categories,id',
+            'category_id' => 'required|exists:categories,id',
+            'plan_id' => 'required|exists:plans,id',
             'opening_time' => 'nullable',
             'closing_time' => 'nullable',
-            'payment_mode' => 'required|string',
-            'transaction_id' => 'nullable|string',
-            'reference_number' => 'nullable|string',
-            'special_recommendation' => 'nullable|string',
-            'internal_comments' => 'nullable|string',
-            'denominations.*' => 'nullable|integer|min:0',
+            'payment_mode' => 'required|in:gpay,bank_transfer,cash',
+            'transaction_id' => 'nullable|string|max:255',
+            'reference_number' => 'nullable|string|max:255',
+            'amount' => 'nullable|numeric',
+            'emi_duration' => 'nullable|integer|min:1',
             'photo' => 'nullable|image|max:2048',
             'gallery.*' => 'nullable|image|max:2048',
+            'social_links' => 'nullable|array',
+            'denominations' => 'nullable|array',
+            'special_recommendation' => 'nullable|string',
+            'internal_comments' => 'nullable|string',
         ]);
 
-        // ================= PHOTO =================
-        if ($request->hasFile('photo')) {
-            $validated['photo'] = $request->file('photo')->store('vendors/profile', 'public');
+        // ================= FETCH PLAN =================
+        $plan = Plan::findOrFail($request->plan_id);
+
+        // ================= EMI CALCULATION =================
+        $emiDuration = null;
+        $emiAmount = null;
+
+        if ($request->filled('emi_duration') && $request->emi_duration > 0) {
+            $emiDuration = (int) $request->emi_duration;
+            $emiAmount = round($plan->amount / $emiDuration, 2); // backend-safe
         }
 
-        // ================= GALLERY =================
+        // ================= CREATE VENDOR =================
+        $vendor = new Vendor();
+        $vendor->shop_name = $request->shop_name;
+        $vendor->owner_name = $request->owner_name;
+        $vendor->mobile = $request->mobile;
+        $vendor->whatsapp = $request->whatsapp;
+        $vendor->email = $request->email;
+        $vendor->digipin = $request->digipin;
+        $vendor->address = $request->address;
+        $vendor->google_map = $request->google_map;
+        $vendor->service_area = $request->service_area;
+
+        $vendor->main_category_id = $request->main_category_id;
+        $vendor->category_id = $request->category_id;
+        $vendor->plan_id = $plan->id;
+
+        $vendor->opening_time = $request->opening_time;
+        $vendor->closing_time = $request->closing_time;
+
+        $vendor->payment_mode = $request->payment_mode;
+        $vendor->transaction_id = $request->transaction_id;
+        $vendor->reference_number = $request->reference_number;
+        $vendor->amount = $request->amount;
+
+        // ================= SAVE EMI =================
+        $vendor->emi_duration = $emiDuration;
+        $vendor->emi_amount = $emiAmount;
+
+        $vendor->special_recommendation = $request->special_recommendation;
+        $vendor->internal_comments = $request->internal_comments;
+
+        $vendor->status = 'pending';
+        $vendor->created_by = Auth::id();
+
+        // ================= IMAGE UPLOAD =================
+        if ($request->hasFile('photo')) {
+            $vendor->photo = $request->file('photo')->store('vendors/profile', 'public');
+        }
+
         if ($request->hasFile('gallery')) {
-            $gallery = [];
+            $galleryPaths = [];
             foreach ($request->file('gallery') as $image) {
-                $gallery[] = $image->store('vendors/gallery', 'public');
+                $galleryPaths[] = $image->store('vendors/gallery', 'public');
             }
-            $validated['gallery'] = $gallery;
+            $vendor->gallery = json_encode($galleryPaths);
         }
 
         // ================= SOCIAL LINKS =================
-        if ($request->has('social_links')) {
-            $validated['social_links'] = $request->social_links;
+        if ($request->filled('social_links')) {
+            $vendor->social_links = json_encode(array_values(array_filter($request->social_links)));
         }
 
-        // ================= DENOMINATIONS =================
-        $denominations = $request->input('denominations', []);
-        $totalAmount = 0;
-        foreach ($denominations as $value => $count) {
-            $totalAmount += $value * $count;
+        // ================= CASH DENOMINATIONS =================
+        if ($request->payment_mode === 'cash' && $request->filled('denominations')) {
+            $totalAmount = 0;
+            foreach ($request->denominations as $denom => $qty) {
+                $totalAmount += ((int)$denom * (int)$qty);
+            }
+            $vendor->denominations = json_encode($request->denominations);
+            $vendor->total_amount = $totalAmount;
         }
-        $validated['denominations'] = $denominations;
-        $validated['total_amount'] = $totalAmount;
 
-        // ================= META =================
-        $validated['created_by'] = auth()->id();
-        $validated['status'] = 'pending';
+        $vendor->save();
 
-        Vendor::create($validated);
+        // ================= CREATE PAYMENT =================
+        $payment = Payment::create([
+            'vendor_id' => $vendor->id,
+            'plan_id' => $plan->id,
+            'total_amount' => $plan->amount,
+            'emi_duration' => $emiDuration,
+            'emi_amount' => $emiAmount,
+        ]);
 
-        return back()->with('success', 'Vendor submitted for admin approval');
-    }
-
-
-
-    /* =======================
-     * EDIT FORM
-     * ======================= */
-    public function edit(Vendor $vendor)
-    {
-        $this->authorizeVendor($vendor);
-
-        // Main categories (parent_id = NULL)
-        $mainCategories = Category::whereNull('parent_id')
-            ->orderBy('name')
-            ->get();
-
-        $categories = Category::where('parent_id', $vendor->main_category_id)
-            ->orderBy('name')
-            ->get();
-
-        $plans = Plan::orderBy('amount')->get();
-
-        return view('salesman.vendors.edit_vendor', compact(
-            'vendor',
-            'mainCategories',
-            'categories',
-            'plans'
-        ));
-    }
-
-
-    /* =======================
-     * UPDATE VENDOR
-     * ======================= */
-    public function update(Request $request, Vendor $vendor)
-{
-    $validated = $request->validate([
-        'shop_name' => 'required|string|max:255',
-        'owner_name' => 'nullable|string|max:255',
-        'mobile' => 'required|string|max:20',
-        'whatsapp' => 'nullable|string|max:20',
-        'email' => 'nullable|email',
-        'digipin' => 'nullable|string|max:10',
-        'address' => 'nullable|string',
-        'google_map' => 'nullable|url',
-        'service_area' => 'nullable|string',
-        'main_category_id' => 'required|integer',
-        'category_id' => 'required|integer',
-        'plan_id' => 'required|integer',
-        'opening_time' => 'nullable',
-        'closing_time' => 'nullable',
-        'payment_mode' => 'required|string',
-        'transaction_id' => 'nullable|string',
-        'reference_number' => 'nullable|string',
-        'special_recommendation' => 'nullable|string',
-        'internal_comments' => 'nullable|string',
-        'denominations.*' => 'nullable|integer|min:0',
-        'photo' => 'nullable|image|max:2048',
-        'gallery.*' => 'nullable|image|max:2048',
-    ]);
-
-    // ================= PHOTO =================
-     if ($request->hasFile('photo')) {
-        if ($vendor->photo && Storage::disk('public')->exists($vendor->photo)) {
-            Storage::disk('public')->delete($vendor->photo);
+        // ================= CREATE INSTALLMENTS =================
+        if ($emiDuration && $emiAmount) {
+            for ($i = 1; $i <= $emiDuration; $i++) {
+                PaymentInstallment::create([
+                    'payment_id' => $payment->id,
+                    'payment_mode' => $request->payment_mode,
+                    'installment_number' => $i,
+                    'amount' => $emiAmount,
+                    'due_date' => Carbon::now()->addMonths($i)->format('Y-m-d'),
+                    'status' => 'pending',
+                ]);
+            }
+        } else {
+            // Single installment if no EMI
+            PaymentInstallment::create([
+                'payment_id' => $payment->id,
+                'installment_number' => 1,
+                'amount' => $request->amount ?: $plan->amount,
+                'due_date' => Carbon::now(),
+                'status' => 'paid',
+            ]);
         }
-        $validated['photo'] = $request->file('photo')->store('vendors/profile', 'public');
-    } else {
-        $validated['photo'] = $vendor->photo; // keep old photo
+
+        return redirect()->back()->with('success', 'Vendor added successfully with EMI.');
     }
-
-    // ================= GALLERY =================
-    if ($request->hasFile('gallery')) {
-        $gallery = $vendor->gallery ?? []; // existing images
-        foreach ($request->file('gallery') as $image) {
-            $gallery[] = $image->store('vendors/gallery', 'public');
-        }
-        $validated['gallery'] = $gallery;
-    } else {
-        $validated['gallery'] = $vendor->gallery; // preserve old
-    }
-
-    // ================= SOCIAL LINKS =================
-    if ($request->has('social_links')) {
-        $validated['social_links'] = $request->social_links;
-    } else {
-        $validated['social_links'] = $vendor->social_links; // preserve old
-    }
-
-    // ================= DENOMINATIONS =================
-    $denominations = $request->input('denominations', $vendor->denominations ?? []);
-    $totalAmount = 0;
-    foreach ($denominations as $value => $count) {
-        $totalAmount += $value * $count;
-    }
-    $validated['denominations'] = $denominations;
-    $validated['total_amount'] = $totalAmount;
-
-    // ================= META =================
-    $validated['created_by'] = $vendor->created_by; // keep original creator
-    $validated['status'] = $vendor->status;        // preserve current status
-
-    $vendor->update($validated);
-
-   return redirect()->route('salesman.vendor-list')->with('success', 'Vendor updated successfully');
-
-}
 
 
     /* =======================
@@ -283,4 +257,50 @@ class VendorController extends Controller
 
         return back()->with('success', 'Vendor deleted successfully');
     }
+
+    public function deoindex()
+    {
+        $deoId = auth()->id(); // DEO id = 3
+
+        // Get all salesmen under this DEO
+        $salesmanIds = User::where('role', 'salesman')
+            ->where('deo_id', $deoId)
+            ->pluck('id');
+
+        // Get vendors under those salesmen
+        $vendors = Vendor::whereIn('created_by', $salesmanIds)
+            ->latest()
+            ->get();
+
+        return view('deo.vendors.index', compact('vendors'));
+    }
+
+    public function approve(Vendor $vendor)
+    {
+        $vendor->update([
+            'status' => 'approved',
+            'approved_at' => now(),
+        ]);
+
+        return back()->with('success', 'Vendor approved successfully.');
+    }
+
+    public function markPaid(Request $request, PaymentInstallment $installment)
+{
+    $installment->update([
+        'status' => 'paid',
+        'paid_at' => Carbon::now(),
+        'payment_mode' => $request->payment_mode,
+        'transaction_id' => $request->transaction_id,
+        'denominations' => $request->denominations,
+    ]);
+
+    $payment = $installment->payment;
+
+    if ($payment->installments()->where('status', 'pending')->count() === 0) {
+        $payment->update(['status' => 'completed']);
+    }
+
+    return back()->with('success', 'EMI marked as paid');
+}
 }

@@ -184,48 +184,69 @@
                         <li class="menu-title"><span>Vendor Monitoring</span></li>
 
                         <li class="nav-item">
-                            <a class="nav-link menu-link {{ request()->routeIs('deo.vendors.index') ? 'active' : '' }}"
-                                href="">
+                            <a class="nav-link menu-link {{ request()->routeIs('vendors.deoindex') ? 'active' : '' }}"
+                                href="{{ route('vendors.deoindex') }}">
                                 <i class="ri-store-2-line"></i>
                                 <span>All Vendors</span>
                             </a>
                         </li>
 
+
                         <li class="nav-item">
                             <a class="nav-link menu-link {{ request()->routeIs('deo.vendors.pending') ? 'active' : '' }}"
-                                href="">
+                                href="{{ route('deo.vendors.pending') }}">
                                 <i class="ri-time-line"></i>
                                 <span>Pending Vendors</span>
                             </a>
                         </li>
 
+
                         {{-- REPORTS --}}
                         <li class="menu-title"><span>Reports & Submissions</span></li>
 
                         <li class="nav-item">
-                            <a class="nav-link menu-link {{ request()->routeIs('deo.reports.daily') ? 'active' : '' }}"
-                                href="">
+                            <a class="nav-link menu-link
+                            {{ request()->routeIs('salesman.submissions.*', 'deo.submissions.*', 'area.submissions.*') ? 'active' : '' }}"
+                                href="
+                                @if (auth()->user()->role === 'salesman') {{ route('salesman.submissions.index') }}
+                                @elseif(auth()->user()->role === 'deo')
+                                {{ route('deo.submissions.index') }}
+                                @else
+                                {{ route('area.submissions.index') }} @endif
+                                ">
                                 <i class="ri-file-list-3-line"></i>
-                                <span>Daily Reports</span>
+                                <span>Submissions</span>
                             </a>
                         </li>
 
                         <li class="nav-item">
                             <a class="nav-link menu-link {{ request()->routeIs('deo.reports.monthly') ? 'active' : '' }}"
-                                href="">
+                                href="{{ route('reports.monthly') }}">
                                 <i class="ri-calendar-check-line"></i>
-                                <span>Monthly Reports</span>
+                                <span>Reports</span>
                             </a>
                         </li>
+
 
                         {{-- COMMUNICATION --}}
                         <li class="menu-title"><span>Communication</span></li>
 
                         <li class="nav-item">
-                            <a class="nav-link menu-link {{ request()->routeIs('deo.messages') ? 'active' : '' }}"
-                                href="">
+                            <a class="nav-link {{ request()->routeIs(auth()->user()->role . '.messages.*') ? 'active' : '' }}"
+                                href="{{ route(auth()->user()->role . '.messages.index') }}">
                                 <i class="ri-message-3-line"></i>
-                                <span>Admin Messages</span>
+                                <span>Messages</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link menu-link
+                            {{ request()->routeIs('salesman.company.messages.index') ? 'active' : '' }}
+                            {{ request()->routeIs('deo.company.messages.index') ? 'active' : '' }}
+                            {{ request()->routeIs('area_operator.company.messages.index') ? 'active' : '' }}
+                                "
+                                href="{{ route(auth()->user()->role . '.company.messages.index') }}">
+                                <i class="ri-message-3-line"></i>
+                                <span>Company Messages</span>
                             </a>
                         </li>
 
@@ -242,11 +263,12 @@
 
                         <li class="nav-item">
                             <a class="nav-link menu-link {{ request()->routeIs('deo.profile') ? 'active' : '' }}"
-                                href="">
+                                href="{{ route('deo.profile') }}">
                                 <i class="ri-user-settings-line"></i>
                                 <span>My Profile</span>
                             </a>
                         </li>
+
 
                         <li class="nav-item">
                             <form method="POST" action="{{ route('logout') }}">

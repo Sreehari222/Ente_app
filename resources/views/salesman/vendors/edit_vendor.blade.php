@@ -1,4 +1,4 @@
-@extends('layouts.sales')
+@extends('layouts.salesman')
 
 @section('title', 'Edit Vendor')
 

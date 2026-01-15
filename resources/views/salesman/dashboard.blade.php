@@ -1,4 +1,4 @@
-@extends('layouts.sales')
+@extends('layouts.salesman')
 
 @section('title', 'Sales Dashboard')
 
@@ -124,7 +124,7 @@
             <div class="card-body">
                 <h4 class="card-title mb-4">Progress Tracking</h4>
                 <p class="text-muted mb-4">This dashboard helps staff track vendor onboarding, listing approvals, promotional activities, and advertisement campaigns to ensure smooth operations and timely interventions.</p>
-                
+
                 <div class="row">
                     <div class="col-md-6 mb-4 mb-md-0">
                         {{-- Recent Vendors Table --}}
@@ -158,7 +158,7 @@
                             </table>
                         </div>
                     </div>
-                    
+
                     <div class="col-md-6">
                         {{-- Active Offers List --}}
                         <h5 class="section-title mb-3">Active Offers</h5>

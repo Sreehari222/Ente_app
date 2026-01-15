@@ -3,6 +3,9 @@
 use App\Http\Controllers\Admin\AreaOperatorController;
 use App\Http\Controllers\Admin\BlockedUserController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\AreaOperator\AreaoperatorDashboardController;
+use App\Http\Controllers\deo\deoReportController;
+use App\Http\Controllers\deo\deoVendorController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\PlanController;
 use App\Http\Controllers\SubCategoryController;
@@ -24,10 +27,25 @@ use App\Http\Controllers\Admin\InfoController;
 use App\Http\Controllers\Admin\OfferController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\RewardController;
+use App\Http\Controllers\AreaOperator\AreaOperatorAttendanceController;
+use App\Http\Controllers\AreaOperator\AreaOperatorDEOController;
+use App\Http\Controllers\AreaOperator\AreaOperatorMessageController;
+use App\Http\Controllers\AreaOperator\AreaOperatorNotificationController;
+use App\Http\Controllers\AreaOperator\AreaOperatorProfileController;
+use App\Http\Controllers\AreaOperator\AreaOperatorReportController;
+use App\Http\Controllers\AreaOperator\AreaOperatorSalesmanController;
+use App\Http\Controllers\AreaOperator\AreaOperatorSubmissionController;
+use App\Http\Controllers\AreaOperator\AreaOperatorTaskController;
+use App\Http\Controllers\AreaOperator\AreaOperatorVendorController;
+use App\Http\Controllers\deo\DeoProfileController;
 use App\Http\Controllers\Deo\SalesmanlistController;
+use App\Http\Controllers\EMIController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\salesman\RecommendationController;
-
+use App\Http\Controllers\Salesman\StatisticsController;
+use App\Http\Controllers\SubmissionController;
+use App\Http\Controllers\TaskController;
+use App\Http\Controllers\UserCompanyMessageController;
 
 /*
 |--------------------------------------------------------------------------
@@ -134,7 +152,7 @@ Route::middleware(['auth', 'role:admin'])
         Route::delete('/daily-challenges/{id}', [RewardController::class, 'deleteDailyChallenge'])->name('daily_challenges.delete');
 
 
-       /*
+        /*
         |--------------------------------------------------------------------------
         | VERIFICATION & BLOCKING
         |--------------------------------------------------------------------------
@@ -208,9 +226,76 @@ Route::middleware(['auth', 'role:admin'])
 Route::middleware(['auth', 'role:area_operator'])
     ->prefix('area')
     ->group(function () {
-        Route::get('/dashboard', [App\Http\Controllers\AreaOperator\DashboardController::class, 'index'])
-            ->name('area.dashboard');
+
+        Route::get('/dashboard', [AreaoperatorDashboardController::class, 'dashboard'])->name('area.dashboard');
+        // DEO
+        Route::get('/deo', [AreaOperatorDEOController::class, 'index'])->name('area.deo.index');
+        Route::get('/deo/{deo}', [AreaOperatorDEOController::class, 'show'])->name('area.deo.show');
+        Route::get('/deo/create', [AreaOperatorDEOController::class, 'create'])->name('area.deo.create');
+        Route::post('/deo/store', [AreaOperatorDEOController::class, 'store'])->name('area.deo.store');
+        Route::get('/deo/{id}/edit', [AreaOperatorDEOController::class, 'edit'])->name('area.deo.edit');
+        Route::put('/deo/{id}', [AreaOperatorDEOController::class, 'update'])->name('area.deo.update');
+        Route::delete('/deo/{id}', [AreaOperatorDEOController::class, 'destroy'])->name('area.deo.destroy');
+
+
+        Route::get('/salesmen', [AreaOperatorSalesmanController::class, 'index'])->name('area.salesmen.index');
+        Route::get('/create', [AreaOperatorSalesmanController::class, 'create'])->name('create');
+        Route::get('/salesmen/{salesman}', [AreaOperatorSalesmanController::class, 'show'])->name('area.salesmen.show');
+        Route::post('/store', [AreaOperatorSalesmanController::class, 'store'])->name('store');
+        Route::get('/{id}/edit', [AreaOperatorSalesmanController::class, 'edit'])->name('area.salesmen.edit');
+        Route::put('/{id}', [AreaOperatorSalesmanController::class, 'update'])->name('area.salesmen.update');
+        Route::delete('/{id}', [AreaOperatorSalesmanController::class, 'destroy'])->name('destroy');
+
+        Route::get('/vendors', [AreaOperatorVendorController::class, 'index'])->name('area.vendors.index');
+        Route::get('/vendors/{vendor}', [AreaOperatorVendorController::class, 'show'])->name('area.vendors.show');
+        Route::get('/vendors/{vendor}/edit', [AreaOperatorVendorController::class, 'edit'])->name('area.vendors.edit');
+        Route::put('/vendors/{vendor}', [AreaOperatorVendorController::class, 'update'])->name('area.vendors.update');
+        Route::delete('/vendors/{vendor}', [AreaOperatorVendorController::class, 'destroy'])->name('area.vendors.destroy');
+
+
+
+        Route::get('/submissions', [AreaOperatorSubmissionController::class, 'index'])->name('area.submissions.index');
+
+
+        Route::get('/reports', [AreaOperatorReportController::class, 'index'])->name('area.reports.index');
+
+        Route::get('/attendance', [AreaOperatorAttendanceController::class, 'index'])->name('area.attendance.index');
+
+        Route::get('/tasks', [AreaOperatorTaskController::class, 'index'])->name('area.tasks.index');
+
+        Route::get('/notifications', [AreaOperatorNotificationController::class, 'index'])->name('area.notifications.index');
+
     });
+Route::middleware(['auth', 'role:area_operator'])
+    ->prefix('area')
+    ->group(function () {
+        Route::get('profile', [AreaOperatorProfileController::class, 'index'])
+            ->name('area.profile.index');Route::put('profile/{user}', [AreaOperatorProfileController::class, 'update'])
+    ->name('area.profile.update');
+
+    });
+
+
+
+
+
+
+
+Route::get('submissions', [SubmissionController::class, 'index'])->name('area.submissions.index');
+Route::post('submissions', [SubmissionController::class, 'store'])->name('area_operator.submissions.store');
+
+
+Route::middleware(['auth'])->group(function () {
+
+    Route::get('/emis', [EMIController::class, 'index'])->name('emis.index');
+
+    Route::get('/emis/{payment}', [EMIController::class, 'show'])
+        ->name('emis.show');
+        Route::post('/emis/{installment}/pay', [EMIController::class, 'markPaid'])
+    ->name('emis.pay');
+
+
+});
 
 /*
 |--------------------------------------------------------------------------
@@ -224,17 +309,34 @@ Route::middleware(['auth', 'role:deo'])
         Route::get('/salesmen', [SalesmanlistController::class, 'index'])->name('salesmen.index');
         Route::get('/deo/salesmen/{salesman}', [SalesmanlistController::class, 'show'])->name('salesmen.show');
         Route::get('/salesmen/{salesman}/edit', [SalesmanlistController::class, 'edit'])->name('salesmen.edit');
+        Route::put('salesmen/{id}', [SalesmanController::class, 'update'])->name('salesman.update');
         Route::delete('/salesmen/{salesman}', [SalesmanlistController::class, 'destroy'])->name('salesmen.destroy');
         Route::get('/salesmen/performance', [SalesmanController::class, 'performance'])->name('deo.salesmen.performance');
+        Route::get('deo/vendors/pending', [deoVendorController::class, 'pending'])->name('deo.vendors.pending');
+
+        Route::get('reports/monthly', [deoReportController::class, 'monthly'])->name('reports.monthly');
+
+
+        Route::get('vendors/{vendor}', [deoVendorController::class, 'show'])->name('deo.vendors.show');
+        Route::get('vendors/{vendor}/edit', [deoVendorController::class, 'edit'])->name('deo.vendors.edit');
+        Route::put('vendors/{vendor}', [deoVendorController::class, 'update'])->name('deo.vendors.update');
 
         Route::get('/vendors', [VendorController::class, 'index'])->name('vendors.index');
         Route::get('/vendors/pending', [VendorController::class, 'pending'])->name('vendors.pending');
+        Route::put('vendors/{vendor}/approve', [VendorController::class, 'approve'])->name('vendors.approve');
 
+
+        Route::get('deo/profile', [DeoProfileController::class, 'index'])->name('deo.profile');
+        Route::get('profile/edit', [DeoProfileController::class, 'edit'])->name('profile.edit');
+        Route::put('deo/profile', [DeoProfileController::class, 'update'])->name('profile.update');
         // Route::get('/reports/daily', [DeoReportController::class, 'daily'])->name('reports.daily');
         // Route::get('/reports/monthly', [DeoReportController::class, 'monthly'])->name('reports.monthly');
 
 
         // Route::get('/profile', [DeoProfileController::class, 'show'])->name('profile');
+        Route::get('submissions', [SubmissionController::class, 'index'])->name('deo.submissions.index');
+        Route::post('submissions', [SubmissionController::class, 'store'])->name('deo.submissions.store');
+        Route::get('deo/vendors', [VendorController::class, 'deoindex'])->name('vendors.deoindex');
     });
 
 /*
@@ -258,8 +360,11 @@ Route::middleware(['auth', 'role:salesman'])
 
         Route::get('sales/vendors/{vendor}/edit', [VendorController::class, 'edit'])->name('vendors.edit');
         Route::patch('vendors/{vendor}/toggle', [VendorController::class, 'toggleStatus'])->name('vendors.toggle');
-        // Route::get('/recommendations', [RecommendationController::class, 'index'])->name('recommendations');
-        // Route::post('/recommendations', [RecommendationController::class, 'store'])->name('recommendations.store');
+        Route::get('statistics', [StatisticsController::class, 'index'])->name('statistics');        // Route::post('/recommendations', [RecommendationController::class, 'store'])->name('recommendations.store');
+        Route::get('submissions', [SubmissionController::class, 'index'])->name('submissions.index');
+        Route::post('submissions', [SubmissionController::class, 'store'])->name('submissions.store');
+
+        Route::get('admin/salesmen/performance', [SalesmanController::class, 'performance']);
     });
 
 
@@ -274,10 +379,11 @@ Route::middleware(['auth', 'role:user'])
         Route::get('/dashboard', [App\Http\Controllers\User\DashboardController::class, 'index'])->name('user.dashboard');
     });
 
-    Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth'])->group(function () {
     Route::prefix('admin')->middleware('role:admin')->name('admin.')->group(function () {
         Route::get('messages', [MessageController::class, 'index'])->name('messages.index');
         Route::get('messages/create', [MessageController::class, 'create'])->name('messages.create');
+        Route::post('messages', [MessageController::class, 'store'])->name('messages.store'); // NEW
         Route::post('messages/{message}/reply', [MessageController::class, 'reply'])->name('messages.reply');
     });
 
@@ -285,23 +391,47 @@ Route::middleware(['auth', 'role:user'])
     Route::prefix('deo')->middleware('role:deo')->name('deo.')->group(function () {
         Route::get('messages', [MessageController::class, 'index'])->name('messages.index');
         Route::get('messages/create', [MessageController::class, 'create'])->name('messages.create');
+        Route::post('messages', [MessageController::class, 'store'])->name('messages.store');
+        Route::post('messages/{message}/reply', [MessageController::class, 'reply'])->name('messages.reply');
     });
 
     Route::prefix('salesman')->middleware('role:salesman')->name('salesman.')->group(function () {
         Route::get('messages', [MessageController::class, 'index'])->name('messages.index');
         Route::get('messages/create', [MessageController::class, 'create'])->name('messages.create');
+        Route::post('messages/{message}/reply', [MessageController::class, 'reply'])->name('messages.reply');
     });
 
     Route::prefix('area-operator')->middleware('role:area_operator')->name('area_operator.')->group(function () {
         Route::get('messages', [MessageController::class, 'index'])->name('messages.index');
         Route::get('messages/create', [MessageController::class, 'create'])->name('messages.create');
+        Route::post('messages/{message}/reply', [MessageController::class, 'reply'])->name('messages.reply');
     });
     Route::post('messages', [MessageController::class, 'store'])->name('messages.store');
     Route::post('messages/{message}/reply', [MessageController::class, 'reply'])->name('messages.reply');
 });
 
+Route::prefix('salesman')->middleware(['auth', 'role:salesman'])->group(function () {
+    Route::get('company/messages', [UserCompanyMessageController::class, 'index'])->name('salesman.company.messages.index');
+});
+
+Route::prefix('deo')->middleware(['auth', 'role:deo'])->group(function () {
+    Route::get('company/messages', [UserCompanyMessageController::class, 'index'])->name('deo.company.messages.index');
+});
+
+Route::prefix('area-operator')->middleware(['auth', 'role:area_operator'])->group(function () {
+    Route::get('company/messages', [UserCompanyMessageController::class, 'index'])->name('area_operator.company.messages.index');
+});
 
 
+Route::middleware('auth')->group(function () {
+
+    Route::get('tasks', [TaskController::class, 'index'])->name('tasks.index');
+    Route::get('tasks/create', [TaskController::class, 'create'])->name('tasks.create');
+    Route::post('tasks', [TaskController::class, 'store'])->name('tasks.store');
+    Route::get('tasks/{task}', [TaskController::class, 'show'])->name('tasks.show');
+    Route::post('tasks/{task}/status', [TaskController::class, 'updateStatus'])->name('tasks.updateStatus');
+    Route::get('deos/{deo}/salesmen', [TaskController::class, 'getSalesmenByDEO']);
+});
 
 
 
